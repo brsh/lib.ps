@@ -65,10 +65,10 @@ New-Alias -name re-Profs -value Read-Profiles -Description "Reload profile files
 #Defaults
 AddPSDefault "Format-Table:AutoSize" {if ($host.Name -eq 'ConsoleHost'){$true}}
 
-#####################  Actual Work  #####################
-
 #(Attempt to) Keep duplicates out of History
 Set-PSReadLineOption –HistoryNoDuplicates:$True
+
+#####################  Actual Work  #####################
 
 #Modules
 if (test-path $Global:LibPath\Modules) {
@@ -80,22 +80,12 @@ if (test-path $Global:LibPath\Modules) {
 }
 
 #PSDrives
-New-ProfilePSDrive -name Profile -Location $env:USERPROFILE -Description "Home Directory"
-New-ProfilePSDrive -name Documents -Location $env:USERPROFILE\Documents -Description "User Documents folder"
-New-ProfilePSDrive -name Downloads -Location $env:USERPROFILE\Downloads -Description "User Downloads folder"
-New-ProfilePSDrive -name GitHub -Location $env:USERPROFILE\Documents\GitHub -Description "Git master directories"
-New-ProfilePSDrive -name PSHome -Location $PSHome -Description "Powershell program folder"
+if (test-path $Global:LibPath\Settings\psdrive.csv) {
+    import-csv $Global:LibPath\Settings\psdrive.csv | New-ProfilePSDrive
+}
 
 if (Get-Service VMTools -ea SilentlyContinue) {
     New-ProfilePSDrive -name VMHost -Location "\\vmware-host\Shared Folders\$env:username\scripts" -Description "VMHost scripts"
-}
-
-#Path Adjustments
-if (Test-Path $Global:LibPath\Settings\Add-ToPath.ini) {
-    get-content $Global:LibPath\Settings\Add-ToPath.ini | Add-ToPath
-}
-if (Test-Path $Global:LibPath\Settings\remove-frompath.ini) {
-    get-content $Global:LibPath\Settings\remove-frompath.ini | Remove-FromPath
 }
 
 ## GitHub
@@ -125,6 +115,14 @@ if ((Test-Path $env:LOCALAPPDATA\GitHub\shell.ps1) -and ($env:github_git -eq $nu
             write-host "Could not initialize Git!" -ForegroundColor Red -BackgroundColor Black
         }
     }
+}
+
+#Path Adjustments
+if (Test-Path $Global:LibPath\Settings\Add-ToPath.ini) {
+    get-content $Global:LibPath\Settings\Add-ToPath.ini | Add-ToPath
+}
+if (Test-Path $Global:LibPath\Settings\remove-frompath.ini) {
+    get-content $Global:LibPath\Settings\remove-frompath.ini | Remove-FromPath
 }
 
 #Only do these next items the first time (initial load)...

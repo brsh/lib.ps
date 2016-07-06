@@ -1,0 +1,6 @@
+name,location,description
+Profile,$env:USERPROFILE,Home Directory
+Documents,$env:USERPROFILE\Documents,User Documents Folder
+Downloads,$env:USERPROFILE\Downloads,User Downloads folder
+GitHub,$env:USERPROFILE\Documents\GitHub,Git master directories
+PSHome,$PSHome,Powershell program folder

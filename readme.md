@@ -34,7 +34,7 @@ That said, you might want to adjust these ini files as necessary for your enviro
 
 #### To Install:
 
-Download and extract the zip from: https://github.com/brsh/lib.ps/archive/master.zip
+Download and extract the zip from: https://github.com/brsh/lib.ps/archive/master.zip (or clone this thing - your call).
 
 Then, pick your preferred Profile file from:
 
