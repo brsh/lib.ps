@@ -11,11 +11,11 @@
 
     Generally, unless there are problems, this is a silent script - use -Verbose to make it noisier.
 
-.PARAMETER URL
+.PARAMETER Source
     Path to the git repository - any path supported by git should work (although I've only tested https)
 
-.PARAMETER DestPath
-    The path where the module will copied. This is the parent path, with the name of the module (seen ModuleName parameter) as the actual folder. Defaults to c:\Scripts\lib.ps\Modules
+.PARAMETER Destination
+    The path where the module will copied. This is the parent path, where the name of the module (seen ModuleName parameter) will be the actual folder. Defaults to c:\Scripts\lib.ps\Modules
 
 .PARAMETER ModuleName
     The default will be the repo name (the end of the URL path). Can be over-ridden with this switch
@@ -27,81 +27,93 @@
     Force the removal of any existing files for this module and redownload the files. Useful for updates to "read-only" copies
 
 .EXAMPLE
-    PS C:\> Get-GitModule.ps1 -url https://github.com/brsh/psSysInfo -Verbose -force -ReadOnly
+    PS C:\> Get-GitModule.ps1 -Source https://github.com/brsh/psSysInfo -Verbose -Force -ReadOnly
 
     Pulls down my psSysInfo module, over-writing all files, showing all messages
 
 .EXAMPLE
-    PS C:\> Get-GitModule.ps1 -url https://github.com/brsh/psSysInfo -force -ReadOnly -ModuleName "Dave"
+    PS C:\> Get-GitModule.ps1 -Source https://github.com/brsh/psSysInfo -Force -ReadOnly -ModuleName "Dave"
 
     Pulls down my psSysInfo module, over-writing all files, but calls the destination folder "Dave"
 
 .EXAMPLE
-    PS C:\> Get-GitModule.ps1 -url https://github.com/brsh/psSysInfo
+    PS C:\> Get-GitModule.ps1 -Source https://github.com/brsh/psSysInfo
 
     Tries to create a standard clone, failing if the destination folder already exists
 #> 
 
 
 param (
-    [string] $url,
-    [string] $destPath = "C:\Scripts\lib.ps\Modules",
+    [Parameter(Mandatory=$true,ValueFromPipeLine=$true)]
+    [Alias('URL', 'Source')]
+    [string[]] $urlPath,
+    [string] $Destination = $(if ($LibPath) { "$LibPath\Modules" } else { throw "No library path (libpath) available." } ),
     [Parameter(Mandatory=$false)]
     [string] $ModuleName,
     [switch] $ReadOnly = $false,
     [switch] $force = $false
 )
 
-if (-not $ModuleName) {
-    $ModuleName = $url.Split("/")[-1]
-}
-
-$destPath = "${destpath}\${ModuleName}"
-
-if (test-path $destPath) {
-    if ($force) {
-        Write-Verbose "Removing $destpath ..."
-        try { 
-            Remove-Item $destPath -Force -Recurse -ErrorAction Stop
+BEGIN {
+    if (-not (test-path $Destination -PathType Container)) {
+        try {
+            mkdir $Destination
         }
         Catch {
-            Write-Warning "Unable to remove full directory structure"
-            "Error Message: {0}" -f $_.Exception.Message | Write-Warning
+            Write-Warning "Failed to create the library's Module directory"
             break
         }
     }
-    else {
-        Write-Verbose "Failed to clone $destPath"
-        Write-Warning "Path $destPath already exists"
-        Write-Warning "Use the -Force switch to overwrite"
-        break
-    }
+ }
 
+PROCESS {
+    foreach ($url in $urlPath) {
+
+        if (-not $ModuleName) {
+            $ModuleName = $url.Split("/")[-1]
+        }
+        
+        $destPath = "${Destination}\${ModuleName}"
+        remove-variable ModuleName
+        
+        if (test-path $destPath) {
+            if ($force) {
+                Write-Verbose "Removing $destpath ..."
+                try { 
+                    Remove-Item $destPath -Force -Recurse -ErrorAction Stop
+                }
+                Catch {
+                    Write-Warning "Unable to remove full directory structure"
+                    "Error Message: {0}" -f $_.Exception.Message | Write-Warning
+                    break
+                }
+            }
+            else {
+                Write-Verbose "Failed to clone $destPath"
+                Write-Warning "Path $destPath already exists"
+                Write-Warning "Use the -Force switch to overwrite"
+                break
+            }
+        
+        }
+                
+        if ($ReadOnly) {
+            if ($VerbosePreference -ne [System.Management.Automation.ActionPreference]::SilentlyContinue) {
+                git clone $url $destPath --depth 1
+            }
+            else {
+                git clone $url $destPath --depth 1 --quiet
+            }
+        }
+        else {
+            if ($VerbosePreference -ne [System.Management.Automation.ActionPreference]::SilentlyContinue) {
+                git clone $url $destpath
+            }
+            else {
+                git clone $url $destpath --quiet
+            }
+        }
+    }
 }
 
-if (-not (test-path C:\Scripts\lib.ps\Modules -PathType Container)) {
-    try {
-        mkdir C:\scripts\lib.ps\Modules
-    }
-    Catch {
-        Write-Warning "Failed to create the library's Module directory"
-        break
-    }
-}
-
-if ($ReadOnly) {
-    if ($VerbosePreference -ne [System.Management.Automation.ActionPreference]::SilentlyContinue) {
-        git clone $url $destPath --depth 1
-    }
-    else {
-        git clone $url $destPath --depth 1 --quiet
-    }
-}
-else {
-    if ($VerbosePreference -ne [System.Management.Automation.ActionPreference]::SilentlyContinue) {
-        git clone $url $destpath
-    }
-    else {
-        git clone $url $destpath --quiet
-    }
-}
+END { }

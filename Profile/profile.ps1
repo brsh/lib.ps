@@ -21,12 +21,14 @@ if(!$global:WindowTitlePrefix) {
     }
  }
 
+ $Global:LibPath = $PSScriptRoot.Replace("\Profile", "")
+
 
 ################### Inits ######################
 
 # Dot sourcing private script files
-if (Test-Path C:\scripts\lib.ps\Profile\private) {
-    Get-ChildItem C:\scripts\lib.ps\Profile\private -Recurse -Filter "*.ps1" -File | Foreach { 
+if (Test-Path $Global:LibPath\Profile\private) {
+    Get-ChildItem $Global:LibPath\Profile\private -Recurse -Filter "*.ps1" -File | Foreach { 
         . $_.FullName
     }
 }
@@ -60,6 +62,8 @@ if (!($isDotSourced)) { write-host "You must dot source this function" -fore Red
 
 New-Alias -name re-Profs -value Read-Profiles -Description "Reload profile files (must . source)" -Force
 
+#Defaults
+AddPSDefault "Format-Table:AutoSize" {if ($host.Name -eq 'ConsoleHost'){$true}}
 
 #####################  Actual Work  #####################
 
@@ -67,12 +71,12 @@ New-Alias -name re-Profs -value Read-Profiles -Description "Reload profile files
 Set-PSReadLineOption –HistoryNoDuplicates:$True
 
 #Modules
-if (test-path C:\Scripts\lib.ps\Modules) {
+if (test-path $Global:LibPath\Modules) {
     #I recommend:
     #   changing the owner of the folder to "Administrators" or "Administrator"
     #   and removing read/write from general users (like 'Authenticated Users' or 'Everyone'... or your own account)
     #Just to restrict changes a little - just a little...
-    Get-ChildItem C:\Scripts\lib.ps\Modules *.psm1 -Recurse | ForEach-Object { Import-Module $_.FullName -force }
+    Get-ChildItem $Global:LibPath\Modules *.psm1 -Recurse | ForEach-Object { Import-Module $_.FullName -force }
 }
 
 #PSDrives
@@ -87,15 +91,12 @@ if (Get-Service VMTools -ea SilentlyContinue) {
 }
 
 #Path Adjustments
-if (Test-Path C:\scripts\lib.ps\Profile\private\Add-ToPath.ini) {
-    get-content C:\scripts\lib.ps\Profile\private\Add-ToPath.ini | Add-ToPath
+if (Test-Path $Global:LibPath\Settings\Add-ToPath.ini) {
+    get-content $Global:LibPath\Settings\Add-ToPath.ini | Add-ToPath
 }
-if (Test-Path C:\Scripts\lib.ps\Settings\remove-frompath.ini) {
-    get-content C:\Scripts\lib.ps\Settings\remove-frompath.ini | Remove-FromPath
+if (Test-Path $Global:LibPath\Settings\remove-frompath.ini) {
+    get-content $Global:LibPath\Settings\remove-frompath.ini | Remove-FromPath
 }
-
-#Defaults
-AddPSDefault "Format-Table:AutoSize" {if ($host.Name -eq 'ConsoleHost'){$true}}
 
 ## GitHub
 if ((Test-Path $env:LOCALAPPDATA\GitHub\shell.ps1) -and ($env:github_git -eq $null)) { 
@@ -126,7 +127,6 @@ if ((Test-Path $env:LOCALAPPDATA\GitHub\shell.ps1) -and ($env:github_git -eq $nu
     }
 }
 
-
 #Only do these next items the first time (initial load)...
 if (!($isDotSourced)) { 
     #Create the "standard" aliases for programs
@@ -142,4 +142,3 @@ else {
     #I hate littering the field with random variables
     remove-item variable:\isDotSourced 
 }
-
