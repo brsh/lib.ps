@@ -14,7 +14,6 @@ CurrentUserAllHosts    | C:\Users\bshea\Documents\WindowsPowerShell\profile.ps1
 CurrentUserCurrentHost | C:\Users\bshea\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
 
 and add the following:
-
 ```
 if (test-path C:\Scripts\lib.ps\Profile\profile.ps1) {
     . C:\Scripts\lib.ps\Profile\profile.ps1
@@ -26,13 +25,11 @@ To Install:
 Download and extract the zip from: https://github.com/brsh/lib.ps/archive/master.zip
 
 To get my modules, after installing and loading the profile (either restart PowerShell or just dot source the profile.ps1), then run:
-
 ```
-Get-GitModule.ps1 -url https://github.com/brsh/psSysInfo -force -ReadOnly
-Get-GitModule.ps1 -url https://github.com/brsh/psPrompt -force -ReadOnly
-Get-GitModule.ps1 -url https://github.com/brsh/psOutput -force -ReadOnly
+Get-GitModule.ps1 -url https://github.com/brsh/psSysInfo -Force -ReadOnly
+Get-GitModule.ps1 -url https://github.com/brsh/psPrompt -Force -ReadOnly
+Get-GitModule.ps1 -url https://github.com/brsh/psOutput -Force -ReadOnly
 ```
-
-
+You should also be able to add additional modules just by specifying their urls
 
 
