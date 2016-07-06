@@ -2,30 +2,27 @@ My Powershell Library
 
 This sets up my PowerShell environment - including my profile and my "standard" scripts, modules, psdrives, and settings. Of course, to load everything, I still need to manually doctor a main PowerShell Profile file. I use the AllUsersCurrentHost, cuz I'm every user (hmm... reminds me of a song). 
 
-Some of my standard functions (run 'snew' to see a more current list; or 'snew -ModulesToo' to include loaded modules):
+Some of my standard functions ('snew' shows the current list; or 'snew -ModulesToo' to include loaded modules):
 
 Command                   | Alias       | Description
 -------                   | -----       | -----------
+Add-ToPath                | PathAdd     | Adds a directory to the path
 Find-Commands             | which       | Lists/finds commands with specified text
 Find-Files                | find        | Search multiple folders for files
 Find-InTextFile           | grep        | Grep with GSAR abilities
+Get-Calendar              | cal         | Show current month calendar
 Get-CurrentCalendar       | curcal      | Show previous, current, and next months
 Get-LoadedModuleFunctions | glmf        | List functions from loaded modules
-Get-ModuleDirs            | moddirs     | List the module directories
 Get-NewCommands           | snew        | Show this list
 Get-ProfilePSDrive        | PfDrive     | Drives created by PS Profile
-Get-Profiles              | Profs       | List PowerShell profile files/paths
 Get-SplitEnvPath          | ePath       | Display the path environment var
-Get-WifiNetworks          | wifi        | List available wifi networks
 GoHome                    | cd~         | Return to home directory
 New-File                  | touch       | Create an empty file
 New-TimestampedFile       | ntf         | Create a new file w/timestamped filename
 Read-Profiles             | re-Profs    | Reload profile files (must . source)
+Remove-FromPath           | PathDel     | Removes a directory from the path
 Set-CountDown             | tminus      | Pause with a countdown timer
 Test-Port                 | pp          | Test a TCP connection on the specified port
-Test-ValidEmail           | isEmail     | Returns true if valid email
-Test-ValidIPAddress       | isIP        | Tests for valid IP Address
-Test-ValidMACAddress      | isMAC       | Returns true if valid MAC Address
 
 My default folder location for scripting is, aptly, C:\Scripts. I keep this library, therefore, in C:\Scripts\libs.ps. For some degree of security, I adjust the permissions so that the Owner is "Administrator" from the local machine - then I remove Write permissions from any non-Administrator user/group. This forces a UAC prompt (or abject failure) if I try to modify anything without Admin elevation. If you're not familiar with NTFS and permissions, I recommend looking into them....
 
