@@ -79,6 +79,16 @@ if (test-path $destPath) {
 
 }
 
+if (-not (test-path C:\Scripts\lib.ps\Modules -PathType Container)) {
+    try {
+        mkdir C:\scripts\lib.ps\Modules
+    }
+    Catch {
+        Write-Warning "Failed to create the library's Module directory"
+        break
+    }
+}
+
 if ($ReadOnly) {
     if ($VerbosePreference -ne [System.Management.Automation.ActionPreference]::SilentlyContinue) {
         git clone $url $destPath --depth 1
