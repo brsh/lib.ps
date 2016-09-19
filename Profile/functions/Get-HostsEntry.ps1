@@ -25,3 +25,5 @@
         $InfoStack
     }
 }
+
+set-alias -name hosts -value Get-HostsEntry -Description "List entries in the Hosts file" -Force

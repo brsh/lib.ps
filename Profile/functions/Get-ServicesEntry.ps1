@@ -66,3 +66,5 @@
         $InfoStack
     }
 }
+
+set-alias -name svcs -value Get-ServicesEntry -Description "List entries in the Services file" -Force
