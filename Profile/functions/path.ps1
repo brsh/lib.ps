@@ -29,7 +29,7 @@ New-Alias -name Profs -value Get-Profiles -Description "List PowerShell profile 
 
 function Get-SplitEnvPath {
   #display system path components in a human-readable format
-    write-host "Directories in the Path: " -fore White
+    #write-host "Directories in the Path: " -fore White
     ($env:Path).Split(";",[StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { 
         $p = @{}
         $p.Path = $_
@@ -66,10 +66,14 @@ function Add-ToPath {
 
     PROCESS {
         ForEach ($Directory in $Directories) {
-            $Dir = ""
+            [String] $Dir = ""
             Switch ($Directory) {
-                { test-path $_ -PathType Container } { $Dir = (Resolve-Path $_).ProviderPath; break }
-                { test-path $_ -PathType leaf } { $Dir = (Resolve-Path (Split-Path $_ -Parent)).ProviderPath; break }
+                # Is a normal directory
+                { test-path $_ -PathType Container } { $Dir = (Resolve-Path $_).ProviderPath; break; }
+                # Is a wildcard - add all subfolders
+                { $Directory.EndsWith("*") }         { $Dir = (Resolve-Path $_ | Where-Object { Test-Path $_ -PathType Container }).ProviderPath -join ';'; break; }
+                # Is a file, add the parent folder
+                { test-path $_ -PathType leaf }      { $Dir = (Resolve-Path (Split-Path $_ -Parent)).ProviderPath; break; }
             }
 
             if ($Dir.Length -gt 0) {

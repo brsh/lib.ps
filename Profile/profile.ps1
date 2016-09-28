@@ -91,11 +91,19 @@ if (Get-Service VMTools -ea SilentlyContinue) {
 
 #Path Adjustments
 if (Test-Path $Global:LibPath\Settings\Add-ToPath.ini) {
-    get-content $Global:LibPath\Settings\Add-ToPath.ini | Add-ToPath
+    # get-content $Global:LibPath\Settings\Add-ToPath.ini | Add-ToPath
+    Get-Content $Global:LibPath\Settings\Add-ToPath.ini | ForEach-Object { 
+        $p=@{}
+        $p.Directories = $_.split(",")[0]
+        $p.Recurse = [bool] $_.split(",")[1]
+        New-Object -TypeName psobject -Property $p 
+    } | Add-ToPath
 }
 if (Test-Path $Global:LibPath\Settings\remove-frompath.ini) {
     get-content $Global:LibPath\Settings\remove-frompath.ini | Remove-FromPath
 }
+
+(Get-SplitEnvPath | Where-Object { -not $_.Exists }).Path | Remove-FromPath  ## Removes non-existent dirs from path
 
 #Only do these next items the first time (initial load)...
 if (!($isDotSourced)) { 
