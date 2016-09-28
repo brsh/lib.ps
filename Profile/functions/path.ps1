@@ -1,4 +1,46 @@
-﻿function Add-ToPath {
+﻿function Get-ModuleDirs {
+# Enum the module directories
+    write-host "PowerShell Module Directories: " -fore White
+    ($env:PSModulePath).Split(";",[StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { 
+        $p = @{}
+        $p.Path = $_
+        $p.Exists = (test-path $_)
+        New-Object -TypeName psobject -Property $P
+    }
+}
+
+New-Alias -Name moddirs -Value Get-ModuleDirs -Description "List the module directories" -force
+
+function Get-Profiles {
+    #use to quickly check which (if any) profile slots are inuse
+    write-host "PowerShell Profile Scripts: " -fore White
+    $profile| Get-Member *Host*| `
+        ForEach-Object { $_.name } | `
+        ForEach-Object {
+            $p=@{}
+            $p.Name=$_
+            $p.Path=$profile.$_
+            $p.Exists=(test-path $profile.$_)
+            New-Object -TypeName psobject -property $p
+        }
+}
+
+New-Alias -name Profs -value Get-Profiles -Description "List PowerShell profile files/paths" -Force
+
+function Get-SplitEnvPath {
+  #display system path components in a human-readable format
+    write-host "Directories in the Path: " -fore White
+    ($env:Path).Split(";",[StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { 
+        $p = @{}
+        $p.Path = $_
+        $p.Exists = (test-path $_)
+        New-Object -TypeName psobject -Property $P
+    }
+}
+
+new-alias -name ePath -value Get-SplitEnvPath -Description "Display the path environment var" -Force
+
+function Add-ToPath {
 <#
     .SYNOPSIS
     Adds directory to the path
