@@ -3,7 +3,7 @@
     Gets a PS Module from GitHub
 
 .DESCRIPTION 
-    Intended as a simple way to "build" my PowerShell library's Module folder. Provided the github url (well, git url, really), this script will clone the module into the folder specifed (C:\Scripts\Modules by default). The module can be "read-only" - meaning it will only include 1 level of history (i.e., the current version) - or can be a full, normal clone.
+    Intended as a simple way to "build" my PowerShell library's Module folder. Provided the github url (well, git url, really), this script will clone the module into the folder specifed ($LibPath [C:\Scripts\Modules] or the current folder [if $LibPath isn't defined] by default). The module can be "read-only" - meaning it will only include 1 level of history (i.e., the current version) - or can be a full, normal clone.
 
     By default, this script will not update anything if the folder exists. I don't intend the library modules to be "live" clones, so the standard action if the module has already been cloned is to do Nothing. If you want to download a new copy, you must specify -Force, which will delete the module files and then re-download them.
     
@@ -15,7 +15,7 @@
     Path to the git repository - any path supported by git should work (although I've only tested https)
 
 .PARAMETER Destination
-    The path where the module will copied. This is the parent path, where the name of the module (seen ModuleName parameter) will be the actual folder. Defaults to c:\Scripts\lib.ps\Modules
+    The path where the module will copied. This is the parent path, where the name of the module (seen ModuleName parameter) will be the actual folder. Defaults to $LibPath (c:\Scripts\lib.ps\Modules) or the current folder if $LibPath isn't defined.
 
 .PARAMETER ModuleName
     The default will be the repo name (the end of the URL path). Can be over-ridden with this switch
@@ -47,7 +47,7 @@ param (
     [Parameter(Mandatory=$true,ValueFromPipeLine=$true)]
     [Alias('URL', 'Source')]
     [string[]] $urlPath,
-    [string] $Destination = $(if ($LibPath) { "$LibPath\Modules" } else { throw "No library path (libpath) available." } ),
+    [string] $Destination = $(if ($LibPath) { "$LibPath\Modules" } else { $pwd.ProviderPath } ),
     [Parameter(Mandatory=$false)]
     [string] $ModuleName,
     [switch] $ReadOnly = $false,
@@ -57,11 +57,11 @@ param (
 BEGIN {
     if (-not (test-path $Destination -PathType Container)) {
         try {
-            mkdir $Destination
+            mkdir $Destination -ErrorAction Stop | ForEach-Object { "Successfully created $_" }
         }
         Catch {
             Write-Warning "Failed to create the library's Module directory"
-            break
+            return
         }
     }
  }
