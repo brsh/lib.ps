@@ -71,6 +71,8 @@ New-Alias -name re-Profs -value Read-Profiles -Description "Reload profile files
 AddPSDefault "Format-Table:AutoSize" {if ($host.Name -eq 'ConsoleHost'){$true}}
 
 #(Attempt to) Keep duplicates out of History
+#Ah - I misunderstood this option
+#It doesn't keep dupes out of History; it keeps them from being returned more than 1ce
 Set-PSReadLineOption –HistoryNoDuplicates:$True
 
 #####################  Actual Work  #####################

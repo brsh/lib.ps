@@ -45,10 +45,24 @@ param (
 
 $Copyright = 'To the extent within my power and possible under law, the author(s) have dedicated all copyright and related and neighboring rights to the public domain worldwide. This is distributed without any warranty.'
 
-New-Item -Path $Path -Name $Name -ItemType Directory | Out-Null
-New-Item -Path $Path\$Name -Name "private" -ItemType Directory | Out-Null
+Try {
+    New-Item -Path $Path -Name $Name -ItemType Directory | Out-Null
+    New-Item -Path $Path\$Name -Name "private" -ItemType Directory | Out-Null
+}
+Catch {
+    "Could not create the directory structure."
+    $_.Exception.Message
+    return
+}
 
-Out-File -FilePath "$Path\$Name\$Name.psm1" -Encoding utf8
+Try {
+    Out-File -FilePath "$Path\$Name\$Name.psm1" -Encoding utf8 -NoClobber
+}
+Catch {
+    "Could not create the Module file."
+    $_.Exception.Message
+    return
+}
 
 $Template = @'
 #region Private Variables
@@ -65,8 +79,21 @@ Get-ChildItem $ScriptPath/private -Recurse -Filter "*.ps1" -File | Foreach {
 #endregion Load Private Helpers
 '@
 
-   
-Add-Content -Path "$Path\$Name\$Name.psm1" -Value $Template
+Try {
+    Add-Content -Path "$Path\$Name\$Name.psm1" -Value $Template
+}
+Catch {
+    "Could not add skeleton content to file."
+    $_.Exception.Message
+    return
+}
 
-New-ModuleManifest -Path "$Path\$Name\$Name.psd1" -RootModule $Name -Author $Author -Description $Description `
-    -AliasesToExport $null -FunctionsToExport $null -VariablesToExport $null -CmdletsToExport $null -Copyright $Copyright
+Try {
+    New-ModuleManifest -Path "$Path\$Name\$Name.psd1" -RootModule $Name -Author $Author -Description $Description `
+        -AliasesToExport $null -FunctionsToExport $null -VariablesToExport $null -CmdletsToExport $null -Copyright $Copyright
+}
+Catch {
+    "Could not create the manifest."
+    $_.Exception.Message
+    return
+}
