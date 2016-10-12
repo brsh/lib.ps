@@ -1,0 +1,23 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+    <Snippets  xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
+        <Snippet Version='1.0.0'>
+            <Header>
+                <Title>IfIsAdmin</Title>
+                <Description>Test if current PowerShell instance is run as Admin</Description>
+                <Author></Author>
+                <SnippetTypes>
+                    <SnippetType>Expansion</SnippetType>
+                </SnippetTypes>
+            </Header>
+
+            <Code>
+                <Script Language='PowerShell' CaretOffset='0'>
+                    <![CDATA[if ( ([System.Environment]::OSVersion.Version.Major -gt 5) -and (
+    ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator') ) ) {
+        }]]>
+                </Script>
+            </Code>
+
+    </Snippet>
+</Snippets>
+
