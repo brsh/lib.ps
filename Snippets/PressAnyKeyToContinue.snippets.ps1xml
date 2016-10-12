@@ -1,0 +1,26 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+    <Snippets  xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
+        <Snippet Version='1.0.0'>
+            <Header>
+                <Title>PressAnyKeyToContinue</Title>
+                <Description>Simple &apos;Press Any Key to Continue&apos; routine - it waits for you to press any key</Description>
+                <Author></Author>
+                <SnippetTypes>
+                    <SnippetType>Expansion</SnippetType>
+                </SnippetTypes>
+            </Header>
+
+            <Code>
+                <Script Language='PowerShell' CaretOffset='0'>
+                    <![CDATA[function Press-AnyKeyToContinue()
+{
+    Write-Host "Press any key to continue..."
+    ([Console]::Out.Flush())
+    $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") | Out-Null
+}]]>
+                </Script>
+            </Code>
+
+    </Snippet>
+</Snippets>
+
