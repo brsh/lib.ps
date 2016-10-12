@@ -4,21 +4,21 @@ The ISE includes code Snippets. By default, Snippets are saved to your Documents
 
 #### Key Snippet Info
 ##### Activate
-Control-J
+* Control-J
 
 ##### CmdLets (only available in the ISE Console)
-New-ISESnippet
-Import-ISESnippet
-Get-ISESnippet
+* New-ISESnippet
+* Import-ISESnippet
+* Get-ISESnippet
 
 ##### Folders
-$env:UserProfile\Documents\WindowsPowerShell\Snippets
-c:\Scripts\Lib.PS\Snippets
+* $env:UserProfile\Documents\WindowsPowerShell\Snippets
+* c:\Scripts\Lib.PS\Snippets
 
 ##### Import Lib.PS Snippets into ISE
 ```
 Import-ISESnippet c:\scripts\lib.ps\snippets
 ```
 
-ISE Profile
-$env:UserProfile\Documents\WindowsPowerShell\Microsoft.PowerShellISE_profile.ps1
+##### ISE Profile
+* $env:UserProfile\Documents\WindowsPowerShell\Microsoft.PowerShellISE_profile.ps1
