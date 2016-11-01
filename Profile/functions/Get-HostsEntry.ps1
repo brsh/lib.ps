@@ -1,4 +1,22 @@
 ﻿function Get-HostsEntry {
+<# 
+.SYNOPSIS 
+  Breaks the Hosts file in PS Objects
+
+.DESCRIPTION 
+    Just a simple script to parse the hosts file
+
+.EXAMPLE 
+    Get-HostsEntry.ps1
+
+    Outputs the entire hosts file with name, IP, and comment (if any)
+
+.EXAMPLE
+    Get-HostsEntry.ps1 | Where-Object { $_.Computer -match "SRV" }
+
+    Filters the list to names that contain SRV
+#> 
+
     $HostsFile = "$env:windir\System32\drivers\etc\hosts"
 
     $results = get-content  $HostsFile | Where-Object { ((-not $_.StartsWith("#")) -and ($_.Trim().Length -gt 0)) }
