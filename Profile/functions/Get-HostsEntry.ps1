@@ -11,7 +11,7 @@
             Computer = $hostname
             Comment = $comment.TrimStart("#").Trim()
         }
-        $InfoStack += New-Object -TypeName PSObject -Property $InfoHash
+        $InfoStack = New-Object -TypeName PSObject -Property $InfoHash
 
         #Add a (hopefully) unique object type name
         $InfoStack.PSTypeNames.Insert(0,"Hosts.Information")
