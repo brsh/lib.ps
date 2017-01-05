@@ -25,7 +25,7 @@ Set-CountDown             | tminus      | Pause with a countdown timer
 Test-Port                 | pp          | Test a TCP connection on the specified port
 
 ##### Script Folder / Security
-My default folder location for scripting is, aptly, C:\Scripts. I keep this library, therefore, in C:\Scripts\libs.ps. For some degree of security, I adjust the permissions so that the Owner is "Administrator" from the local machine - then I remove Write permissions from any non-Administrator user/group. This forces a UAC prompt (or abject failure) if I try to modify anything without Admin elevation. If you're not familiar with NTFS and permissions, I recommend looking into them....
+My default folder location for scripting is, aptly, C:\Scripts. I keep this library, therefore, in C:\Scripts\lib.ps. For some degree of security, I adjust the permissions so that the Owner is "Administrator" from the local machine - then I remove Write permissions from any non-Administrator user/group. This forces a UAC prompt (or abject failure) if I try to modify anything without Admin elevation. If you're not familiar with NTFS and permissions, I recommend looking into them....
 
 ##### Ini Files
 Well, they're not truly ini files, more like init files. Within the Settings folder are ini files that configure some of the settings. For example, I use the add-topath.ini file to specify directories to add to the PATH environment variable; and I use the remove-frompath.ini to specify directories to remove. I'm moving more and more of these items to ini files to minimize edits to the scripts themselves. I can add a new dir to the path by changing a ini file rather than edit (and someday, re-sign) the script.
