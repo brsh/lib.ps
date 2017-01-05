@@ -66,23 +66,25 @@ function Add-ToPath {
 
     PROCESS {
         ForEach ($Directory in $Directories) {
-            [String] $Dir = ""
+            [String[]] $Dir = @()
             Switch ($Directory) {
-                # Is a normal directory
-                { test-path $_ -PathType Container } { $Dir = (Resolve-Path $_).ProviderPath; break; }
                 # Is a wildcard - add all subfolders
-                { $Directory.EndsWith("*") }         { $Dir = (Resolve-Path $_ | Where-Object { Test-Path $_ -PathType Container }).ProviderPath -join ';'; break; }
+                { $Directory.EndsWith("*") }         { Resolve-Path $_ | Where-Object { Test-Path $_ -PathType Container } | ForEach-Object { $Dir += $_.ProviderPath }; break; }
+                # Is a normal directory
+                { test-path $_ -PathType Container } { $Dir += (Resolve-Path $_).ProviderPath; break; }
                 # Is a file, add the parent folder
-                { test-path $_ -PathType leaf }      { $Dir = (Resolve-Path (Split-Path $_ -Parent)).ProviderPath; break; }
+                { test-path $_ -PathType leaf }      { $Dir += (Resolve-Path (Split-Path $_ -Parent)).ProviderPath; break; }
             }
 
-            if ($Dir.Length -gt 0) {
-                if ($CurPath -contains $Dir) {
-                    Write-Verbose "$Dir already exists in the path"
-                }
-                else {
-                    $CurPath += $Dir
-                    Write-Verbose "Added $Dir to path"
+            if ($Dir.Count -gt 0) {
+                $dir | ForEach-Object {
+                    if ($CurPath -contains $_) {
+                        Write-Verbose "$_ already exists in the path"
+                    }
+                    else {
+                        $CurPath += $_
+                        Write-Verbose "Added $_ to path"
+                    }
                 }
             }
             else { Write-Verbose "$Directory not added to path - it is not a valid directory" }
