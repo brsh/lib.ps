@@ -105,7 +105,8 @@ if (Test-Path $Global:LibPath\Settings\remove-frompath.ini) {
     get-content $Global:LibPath\Settings\remove-frompath.ini | Remove-FromPath
 }
 
-(Get-SplitEnvPath | Where-Object { -not $_.Exists }).Path | Remove-FromPath  ## Removes non-existent dirs from path
+## Removes non-existent dirs from path
+(Get-SplitEnvPath | Where-Object { -not $_.Exists }).Path | Where-Object { $_ -ne $null } | Remove-FromPath
 
 #Only do these next items the first time (initial load)...
 if (!($isDotSourced)) { 
@@ -117,6 +118,8 @@ if (!($isDotSourced)) {
     Get-NewCommands
     
     GoHome
+    
+    if (test-path $LibPath\Clones\Get-ThisDayInHistory.ps\Get-ThisDayInHistory.ps1) { Get-ThisDayInHistory.ps1 }
 }
 else { 
     #I hate littering the field with random variables
