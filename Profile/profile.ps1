@@ -21,7 +21,7 @@ if(!$global:WindowTitlePrefix) {
     }
  }
 
- $Global:LibPath = $PSScriptRoot.Replace("\Profile", "")
+ $Global:LibPath = $PSScriptRoot -iReplace("\Profile", "")
 
 
 ################### Inits ######################
