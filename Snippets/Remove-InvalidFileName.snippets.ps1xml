@@ -1,0 +1,31 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+    <Snippets  xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
+        <Snippet Version='1.0.0'>
+            <Header>
+                <Title>Remove-InvalidFileName</Title>
+                <Description>Function to remove characters that are not allowed in filenames</Description>
+                <Author></Author>
+                <SnippetTypes>
+                    <SnippetType>Expansion</SnippetType>
+                </SnippetTypes>
+            </Header>
+
+            <Code>
+                <Script Language='PowerShell' CaretOffset='0'>
+                    <![CDATA[Function Remove-InvalidFileNameChars {
+    param(
+        [Parameter(Mandatory=$true, Position=0)]
+        [String] $Text
+    )
+    #Remove invalid filesystem characters and ones we just do not like in filenames
+    $invalidChars = ([IO.Path]::GetInvalidFileNameChars() + "," + ";") -join '
+    $re = "[{0}]" -f [RegEx]::Escape($invalidChars)
+    $Text = $Text -replace $re
+    return $Text
+}]]>
+                </Script>
+            </Code>
+
+    </Snippet>
+</Snippets>
+
