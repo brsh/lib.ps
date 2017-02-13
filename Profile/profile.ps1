@@ -91,6 +91,8 @@ if (Get-Service VMTools -ea SilentlyContinue) {
 }
 
 #Path Adjustments
+add-topath $libpath
+add-topath $libpath\scripts
 if (Test-Path $Global:LibPath\Settings\Add-ToPath.ini) {
     # get-content $Global:LibPath\Settings\Add-ToPath.ini | Add-ToPath
     Get-Content $Global:LibPath\Settings\Add-ToPath.ini | ForEach-Object { 
