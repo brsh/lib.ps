@@ -41,11 +41,11 @@ if( ([System.Environment]::OSVersion.Version.Major -gt 5) -and ( # Vista and ...
 
     "Cloning the default scripts ($LibPath\Settings\Get-Git-Clones.ini):"
     get-content $LibPath\Settings\Get-Git-Clones.ini | ForEach-Object { "    $_" }
-    get-content $LibPath\Settings\Get-Git-Clones.ini | get-GitModule.ps1 -Destination C:\Scripts\lib.ps\Clones -ReadOnly -Force -Verbose
+    get-content $LibPath\Settings\Get-Git-Clones.ini | get-GitModule.ps1 -Destination $LibPath\Clones -ReadOnly -Force -Verbose
     
     "Cloning the default Modules ($LibPath\Settings\Get-Git-Modules.ini):"
     get-content $LibPath\Settings\Get-Git-Modules.ini | ForEach-Object { "    $_" }
-    get-content $LibPath\Settings\Get-Git-Modules.ini | get-GitModule.ps1 -Destination C:\Scripts\lib.ps\Modules -ReadOnly -Force -Verbose
+    get-content $LibPath\Settings\Get-Git-Modules.ini | get-GitModule.ps1 -Destination $LibPath\Modules -ReadOnly -Force -Verbose
 
 } else {
     "Please run this script as an Administrator"
