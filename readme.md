@@ -1,6 +1,6 @@
 My Powershell Library
 
-This sets up my PowerShell environment - including my profile and my "standard" scripts, modules, psdrives, and settings. Of course, to load everything, I still need to manually doctor a main PowerShell Profile file. I use the AllUsersCurrentHost, cuz I'm every user (hmm... reminds me of a song). 
+This sets up my PowerShell environment - including my profile and my "standard" scripts, modules, psdrives, and settings. Of course, to load everything, I still need to manually doctor a main PowerShell Profile file. I use the AllUsersCurrentHost, cuz I'm every user (hmm... reminds me of a song).
 
 Some of my standard functions ('snew' shows the current list; or 'snew -ModulesToo' to include loaded modules):
 
@@ -60,3 +60,6 @@ You should also be able to add additional modules just by adding their urls to t
 https://github.com/dahlbyk/posh-git
 ```
 
+##### OR....
+
+Just save Create-LibPS.ps1 to your local hard drive and run it. It will try to clone all the pieces necessary and adjust your default Powershell profile accordingly.
