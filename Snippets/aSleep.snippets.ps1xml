@@ -1,0 +1,33 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+    <Snippets  xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
+        <Snippet Version='1.0.0'>
+            <Header>
+                <Title>aSleep</Title>
+                <Description>Quick countdown timer / sleep statement</Description>
+                <Author>Brian Sheaffer</Author>
+                <SnippetTypes>
+                    <SnippetType>Expansion</SnippetType>
+                </SnippetTypes>
+            </Header>
+
+            <Code>
+                <Script Language='PowerShell' CaretOffset='0'>
+                    <![CDATA[function aSleep {
+param (
+	[int] $delay = 20,
+	[string] $message = "Please wait $delay seconds... "
+)
+for ($a=$delay; $a -gt 0; $a--) {
+  Write-Host "`r$message" -ForegroundColor Green -NoNewline
+  Write-Host -NoNewLine "$a".PadLeft($delay.ToString().Length + 1) -ForegroundColor yellow
+  Start-Sleep -Seconds 1
+}
+Write-Host "`r$message" -ForegroundColor White -NoNewline
+Write-Host "Done!" -ForegroundColor Green #ends the line after loop
+}]]>
+                </Script>
+            </Code>
+
+    </Snippet>
+</Snippets>
+
