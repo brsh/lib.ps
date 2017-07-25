@@ -25,12 +25,27 @@ Set-CountDown             | tminus      | Pause with a countdown timer
 Test-Port                 | pp          | Test a TCP connection on the specified port
 
 ##### Script Folder / Security
-My default folder location for scripting is, aptly, C:\Scripts. I keep this library, therefore, in C:\Scripts\lib.ps. For some degree of security, I adjust the permissions so that the Owner is "Administrator" from the local machine - then I remove Write permissions from any non-Administrator user/group. This forces a UAC prompt (or abject failure) if I try to modify anything without Admin elevation. If you're not familiar with NTFS and permissions, I recommend looking into them....
+My default folder location for scripting is, aptly, C:\Scripts. I keep this library, therefore, in C:\Scripts\lib.ps (and that's what my install script defaults to). It is psdrive'd to Scripts:\  ... note... any drive you set as the home will be psdrive'd to Scripts:\
+
+For some degree of security, I adjust the permissions so that the Owner is "Administrator" from the local machine - then I remove Write permissions from any non-Administrator user/group. This forces a UAC prompt (or abject failure) if I try to modify anything without Admin elevation. If you're not familiar with NTFS and permissions, I recommend looking into them....
 
 ##### Ini Files
-Well, they're not truly ini files, more like init files. Within the Settings folder are ini files that configure some of the settings. For example, I use the add-topath.ini file to specify directories to add to the PATH environment variable; and I use the remove-frompath.ini to specify directories to remove. I'm moving more and more of these items to ini files to minimize edits to the scripts themselves. I can add a new dir to the path by changing a ini file rather than edit (and someday, re-sign) the script.
+Well, they're not truly ini files, more like init files. Within the lib.ps\Settings folder are ini files that configure some of the settings. For example, I use the add-topath.ini file to specify directories to add to the PATH environment variable (because there are paths to add... but only for PowerShell); and I use the remove-frompath.ini to specify directories to remove (because there are paths to remove...).
 
-That said, you might want to adjust these ini files as necessary for your environment (assuming there actually is a 'you' out there reading and using this).
+I'm moving more and more of these items to ini files to minimize edits to the scripts themselves. I can add a new dir to the path by changing a ini file rather than edit (and someday, re-sign) the script.
+
+That said, you might want to adjust these ini files as necessary for your environment (assuming there actually is a 'you' out there reading and using this). You should also be able to add additional modules just by adding their urls to the ini file. For example (should work, but not tested):
+```
+https://github.com/dahlbyk/posh-git
+```
+
+Name                   | Description
+----                   | ----
+Add-ToPath.ini         | Folders to add to the path for the PowerShell session
+Remove-FromPath.ini    | Folders to remove from the path for thie PowerShell session
+Get-Git-Clones.ini     | URLs for script repos that I find handy to have (will be added to the path)
+Get-Git-Modules.ini    | URLS for Module repos that I find handy to have (will be imported into session)
+PSDrive.csv            | I like PSDrives. They're handy. Look 'em up.
 
 #### To Install:
 
@@ -51,15 +66,22 @@ if (test-path C:\Scripts\lib.ps\Profile\profile.ps1) {
     . C:\Scripts\lib.ps\Profile\profile.ps1
 }
 ```
-To get my modules, after installing and loading the profile (either restart PowerShell or just dot source the profile.ps1), then run:
+To get my scripts and modules, after installing and loading the profile (either restart PowerShell or just dot source the profile.ps1), then run:
 ```
 Get-Content $libpath\Settings\Get-GitModule.ini | Get-GitModule.ps1 -ReadOnly -Verbose
-```
-You should also be able to add additional modules just by adding their urls to the ini file. For example (should work, but not tested):
-```
-https://github.com/dahlbyk/posh-git
+get-content $libpath\Settings\Get-Git-Clones.ini | get-GitModule.ps1 -ReadOnly -Verbose
 ```
 
 ##### OR....
 
 Just save Create-LibPS.ps1 to your local hard drive and run it. It will try to clone all the pieces necessary and adjust your default Powershell profile accordingly.
+
+##### OR!!!!
+
+Just run the following:
+
+```
+$ScriptFromGithHub = Invoke-WebRequest https://raw.githubusercontent.com/brsh/lib.ps/master/Create-LibPS.ps1
+Invoke-Expression $($ScriptFromGithHub.Content)
+```
+

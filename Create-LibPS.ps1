@@ -27,7 +27,6 @@
 #>
 
 
-
 [CmdletBinding(SupportsShouldProcess)]
 param (
 	[Parameter(Mandatory = $false)]
@@ -35,7 +34,7 @@ param (
 )
 
 #For Writing/Troubleshooting purposes (and because I forget to set it at runtime)
-$VerbosePreference = "Continue"
+#$VerbosePreference = "Continue"
 #$VerbosePreference="SilentlyContinue"
 
 Function Read-Profiles {
@@ -58,7 +57,6 @@ Function Read-Profiles {
 		}
 	}
 }
-
 Function Remove-InvalidFileNameChars {
 	param(
 		[Parameter(Mandatory = $true, Position = 0)]
@@ -91,7 +89,7 @@ if (-not $(Test-Path $HomeFolder -ErrorAction SilentlyContinue)) {
 
 	switch ($Response) {
 		0 { try { $HomeFolder = (new-item $HomeFolder -ItemType "Directory" -ErrorAction Stop).FullName } catch { "Couldn't create path $HomeFolder"; "$_"; exit }; break }
-		1 { "Terminating script"; exit; break }
+		1 { Write-Warning "Terminating script"; exit; break }
 	}
 }
 
@@ -100,7 +98,7 @@ Try {
 		Set-Location $HomeFolder -ErrorAction Stop
 	}
 } catch {
-	"Couldn't change directory to the new location $HomeFolder. Terminating script."
+	Write-Warning "Couldn't change directory to the new location $HomeFolder. Terminating script."
 	exit
 }
 
@@ -110,7 +108,7 @@ if (-not ($git)) {
 	"Can't find git in path; trying GitHub's weird location..."
 	$git = (get-command (Resolve-Path "C:\Users\*\AppData\Local\GitHub\PortableGit_*\cmd\git.exe" | Select-Object -First 1).Path -ErrorAction SilentlyContinue).Source
 	if (-not ($git)) {
-		"Can't find git; terminating script"
+		Write-Warning "Can't find git; terminating script"
 		exit
 	}
 }
@@ -145,7 +143,7 @@ if ($pscmdlet.ShouldProcess("LibPS", "Cloning Repository")) {
 					$output = ""
 					$output = $p.StandardError.ReadToEnd()
 					if ($output -ne "") { throw "Error running 'git fetch --all'"}
-					#$retval = Start-Process $git -ArgumentList "fetch --all" -Wait -NoNewWindow
+
 					"Starting git reset..."
 					$pinfo.Arguments = "reset --hard origin/master"
 					$p = New-Object System.Diagnostics.Process
@@ -155,7 +153,7 @@ if ($pscmdlet.ShouldProcess("LibPS", "Cloning Repository")) {
 					$output = ""
 					$output = $p.StandardError.ReadToEnd()
 					if ($output -ne "") { throw "Error running 'git reset --hard origin/master'"}
-					#$retval = Start-Process $git -ArgumentList "reset --hard origin/master" -Wait -NoNewWindow
+
 					"Starting git pull..."
 					$pinfo.Arguments = "pull origin master"
 					$p = New-Object System.Diagnostics.Process
@@ -166,9 +164,8 @@ if ($pscmdlet.ShouldProcess("LibPS", "Cloning Repository")) {
 					$output = $p.StandardError.ReadToEnd()
 					#if ($output -ne "") { throw "Error running 'git pull origin master'"}
 					#(fricken 'up-to-date' repo 'error')
-					#$retval = Start-Process $git -ArgumentList "pull origin master" -Wait -NoNewWindow
 				} catch {
-					"Couldn't update/reset Lib.PS. Terminating script"
+					Write-Warning "Couldn't update/reset Lib.PS. Terminating script"
 					"Git error was: $($output)"
 					$_.Exception.Message
 					exit
@@ -195,7 +192,7 @@ if (test-path $HomeFolder\lib.ps\Profile\profile.ps1) {
 			ForEach-Object {
 			if (test-path ($profile).$_) {
 				if (Get-Content ($profile).$_ | Where-Object { $_.Contains("lib.ps") }) {
-					"Lib.ps exists in ($profile).$_ - Skipping."
+					Write-Warning "Lib.ps exists in ($profile).$_ - Skipping."
 					"You might want to adjust the profile manually by adjusting with the following:"
 					$loadtext
 					$DoUpdateProfile = $false
@@ -207,7 +204,7 @@ if (test-path $HomeFolder\lib.ps\Profile\profile.ps1) {
 			$loadtext | Out-File -Append -FilePath $profile -Force
 		}
 	} Catch {
-		"Couldn't update $profile"
+		Write-Warning "Couldn't update $profile"
 		$_
 		"You will need to adjust the profile manually by adding the following:"
 		$loadtext
