@@ -171,7 +171,7 @@ if ($pscmdlet.ShouldProcess("LibPS", "Cloning Repository")) {
 					exit
 				} break
 			}
-			1 { "Terminating script"; exit; break }
+			1 { "Terminating script"; set-location $HomeFolder; exit; break }
 		}
 	} else {
 		"Cloning Main Lib.PS"
@@ -209,6 +209,7 @@ if (test-path $HomeFolder\lib.ps\Profile\profile.ps1) {
 		"You will need to adjust the profile manually by adding the following:"
 		$loadtext
 	}
+	Set-Location $HomeFolder
 	. Read-Profiles
 }
 
@@ -216,7 +217,7 @@ if ($pscmdlet.ShouldProcess("Standard Modules/Scripts", "Cloning Sub-Repositorie
 	if (test-path ".\lib.ps\Scripts\Reset-Clones.ps1") {
 		.\lib.ps\Scripts\Reset-Clones.ps1 -Folder $HomeFolder\lib.ps
 	}
-	Set-Location ..
+	Set-Location $HomeFolder
 }
 
 
