@@ -34,10 +34,7 @@ Well, they're not truly ini files, more like init files. Within the lib.ps\Setti
 
 I'm moving more and more of these items to ini files to minimize edits to the scripts themselves. I can add a new dir to the path by changing a ini file rather than edit (and someday, re-sign) the script.
 
-That said, you might want to adjust these ini files as necessary for your environment (assuming there actually is a 'you' out there reading and using this). You should also be able to add additional modules just by adding their urls to the ini file. For example (should work, but not tested):
-```
-https://github.com/dahlbyk/posh-git
-```
+That said, you might want to adjust these ini files as necessary for your environment (assuming there actually is a 'you' out there reading and using this). You should also be able to add additional modules just by adding their urls to the ini file.
 
 Name                   | Description
 ----                   | ----
