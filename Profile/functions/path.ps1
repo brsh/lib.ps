@@ -12,11 +12,11 @@
 New-Alias -Name moddirs -Value Get-ModuleDirs -Description "List the module directories" -force
 
 function Get-Profiles {
-	#use to quickly check which (if any) profile slots are inuse
+	#to check which (if any) profile slots are inuse
 	write-host "PowerShell Profile Scripts: " -fore White
-	$profile| Get-Member *Host*| `
-		ForEach-Object { $_.name } | `
-		ForEach-Object {
+	$profile | Get-Member *Host* | ForEach-Object {
+		$_.name
+	} | ForEach-Object {
 		$p = @{}
 		$p.Name = $_
 		$p.Path = $profile.$_
