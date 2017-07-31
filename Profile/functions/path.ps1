@@ -1,47 +1,51 @@
 ﻿function Get-ModuleDirs {
-# Enum the module directories
-    write-host "PowerShell Module Directories: " -fore White
-    ($env:PSModulePath).Split(";",[StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { 
-        $p = @{}
-        $p.Path = $_
-        $p.Exists = (test-path $_)
-        New-Object -TypeName psobject -Property $P
-    }
+	# Enum the module directories
+	write-host "PowerShell Module Directories: " -fore White
+	($env:PSModulePath).Split(";", [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+		$p = @{}
+		$p.Path = $_
+		$p.Exists = (test-path $_)
+		New-Object -TypeName psobject -Property $P
+	}
 }
 
 New-Alias -Name moddirs -Value Get-ModuleDirs -Description "List the module directories" -force
 
 function Get-Profiles {
-    #use to quickly check which (if any) profile slots are inuse
-    write-host "PowerShell Profile Scripts: " -fore White
-    $profile| Get-Member *Host*| `
-        ForEach-Object { $_.name } | `
-        ForEach-Object {
-            $p=@{}
-            $p.Name=$_
-            $p.Path=$profile.$_
-            $p.Exists=(test-path $profile.$_)
-            New-Object -TypeName psobject -property $p
-        }
+	#use to quickly check which (if any) profile slots are inuse
+	write-host "PowerShell Profile Scripts: " -fore White
+	$profile| Get-Member *Host*| `
+		ForEach-Object { $_.name } | `
+		ForEach-Object {
+		$p = @{}
+		$p.Name = $_
+		$p.Path = $profile.$_
+		$p.Exists = (test-path $profile.$_)
+		New-Object -TypeName psobject -property $p
+	}
 }
 
 New-Alias -name Profs -value Get-Profiles -Description "List PowerShell profile files/paths" -Force
 
 function Get-SplitEnvPath {
-  #display system path components in a human-readable format
-    #write-host "Directories in the Path: " -fore White
-    ($env:Path).Split(";",[StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { 
-        $p = @{}
-        $p.Path = $_
-        $p.Exists = (test-path $_)
-        New-Object -TypeName psobject -Property $P
-    }
+	#display system path components in a human-readable format
+	#write-host "Directories in the Path: " -fore White
+	($env:Path).Split(";", [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object {
+		$p = @{}
+		$p.Path = $_
+		try {
+			$p.Exists = (test-path $_ -ErrorAction Stop)
+		} catch {
+			$p.Exists = $_.ToString()
+		}
+		New-Object -TypeName psobject -Property $P
+	}
 }
 
 new-alias -name ePath -value Get-SplitEnvPath -Description "Display the path environment var" -Force
 
 function Add-ToPath {
-<#
+	<#
     .SYNOPSIS
     Adds directory to the path
     .DESCRIPTION
@@ -53,53 +57,51 @@ function Add-ToPath {
     .EXAMPLE
     ".", "C:\Scripts\lib" | Add-ToPath
 #>
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true, ValueFromPipeline=$True, ValueFromPipeLineByPropertyName=$True, HelpMessage="What folder would you like to add?")]
-        [Alias('dir','folder','directory','providerpath')]
-        [string[]] $Directories
-    )
-    
-    BEGIN { 
-        $CurPath = $env:Path.Split(';')
-    }
+	[CmdletBinding()]
+	param (
+		[Parameter(Mandatory = $true, ValueFromPipeline = $True, ValueFromPipeLineByPropertyName = $True, HelpMessage = "What folder would you like to add?")]
+		[Alias('dir', 'folder', 'directory', 'providerpath')]
+		[string[]] $Directories
+	)
 
-    PROCESS {
-        ForEach ($Directory in $Directories) {
-            [String[]] $Dir = @()
-            Switch ($Directory) {
-                # Is a wildcard - add all subfolders
-                { $Directory.EndsWith("*") }         { Resolve-Path $_ | Where-Object { Test-Path $_ -PathType Container } | ForEach-Object { $Dir += $_.ProviderPath }; break; }
-                # Is a normal directory
-                { test-path $_ -PathType Container } { $Dir += (Resolve-Path $_).ProviderPath; break; }
-                # Is a file, add the parent folder
-                { test-path $_ -PathType leaf }      { $Dir += (Resolve-Path (Split-Path $_ -Parent)).ProviderPath; break; }
-            }
+	BEGIN {
+		$CurPath = $env:Path.Split(';')
+	}
 
-            if ($Dir.Count -gt 0) {
-                $dir | ForEach-Object {
-                    if ($CurPath -contains $_) {
-                        Write-Verbose "$_ already exists in the path"
-                    }
-                    else {
-                        $CurPath += $_
-                        Write-Verbose "Added $_ to path"
-                    }
-                }
-            }
-            else { Write-Verbose "$Directory not added to path - it is not a valid directory" }
-        }
-    }
+	PROCESS {
+		ForEach ($Directory in $Directories) {
+			[String[]] $Dir = @()
+			Switch ($Directory) {
+				# Is a wildcard - add all subfolders
+				{ $Directory.EndsWith("*") } { Resolve-Path $_ | Where-Object { Test-Path $_ -PathType Container } | ForEach-Object { $Dir += $_.ProviderPath }; break; }
+				# Is a normal directory
+				{ test-path $_ -PathType Container } { $Dir += (Resolve-Path $_).ProviderPath; break; }
+				# Is a file, add the parent folder
+				{ test-path $_ -PathType leaf } { $Dir += (Resolve-Path (Split-Path $_ -Parent)).ProviderPath; break; }
+			}
 
-    END {
-        $env:Path = [String]::Join(';', $CurPath)
-    }
+			if ($Dir.Count -gt 0) {
+				$dir | ForEach-Object {
+					if ($CurPath -contains $_) {
+						Write-Verbose "$_ already exists in the path"
+					} else {
+						$CurPath += $_
+						Write-Verbose "Added $_ to path"
+					}
+				}
+			} else { Write-Verbose "$Directory not added to path - it is not a valid directory" }
+		}
+	}
+
+	END {
+		$env:Path = [String]::Join(';', $CurPath)
+	}
 }
 
 Set-Alias -name PathAdd -Value Add-ToPath -Description "Adds a directory to the path" -Force
 
 function Remove-FromPath {
-<#
+	<#
     .SYNOPSIS
     Removes a directory from the path
     .DESCRIPTION
@@ -111,33 +113,33 @@ function Remove-FromPath {
     .EXAMPLE
     ".", "C:\Scripts\lib.ps" | Remove-FromPath
 #>
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory=$true, ValueFromPipeline=$True, ValueFromPipeLineByPropertyName=$True, HelpMessage="What folder would you like to remove?", Position=0)]
-        [Alias('dir','folder','directory','providerpath')]
-        [string[]] $Directories,
-        [Parameter(Mandatory=$false, Position=1)]
-        [Alias('show', 'diff')]
-        [Switch] $ShowDifference = $false
-    )
-    
-    BEGIN { 
-        $CurPath = ";${env:Path};"
-        if ($ShowDifference) { "--Before--"; Get-SplitEnvPath } 
-    }
+	[CmdletBinding()]
+	param (
+		[Parameter(Mandatory = $true, ValueFromPipeline = $True, ValueFromPipeLineByPropertyName = $True, HelpMessage = "What folder would you like to remove?", Position = 0)]
+		[Alias('dir', 'folder', 'directory', 'providerpath')]
+		[string[]] $Directories,
+		[Parameter(Mandatory = $false, Position = 1)]
+		[Alias('show', 'diff')]
+		[Switch] $ShowDifference = $false
+	)
 
-    PROCESS {
-        ForEach ($Directory in $Directories) {
-            $CurPath = $CurPath -iReplace [regex]::Escape(";${Directory};"), ";"
-            Write-Verbose "Tried to remove $Directory from path"
-        }
-    }
+	BEGIN {
+		$CurPath = ";${env:Path};"
+		if ($ShowDifference) { "--Before--"; Get-SplitEnvPath }
+	}
 
-    END {
-        $CurPath = $CurPath.Split(';',[StringSplitOptions]::RemoveEmptyEntries)
-        $env:Path = [String]::Join(';', $CurPath)
-        if ($ShowDifference) { "--After--"; Get-SplitEnvPath } 
-    }
+	PROCESS {
+		ForEach ($Directory in $Directories) {
+			$CurPath = $CurPath -iReplace [regex]::Escape(";${Directory};"), ";"
+			Write-Verbose "Tried to remove $Directory from path"
+		}
+	}
+
+	END {
+		$CurPath = $CurPath.Split(';', [StringSplitOptions]::RemoveEmptyEntries)
+		$env:Path = [String]::Join(';', $CurPath)
+		if ($ShowDifference) { "--After--"; Get-SplitEnvPath }
+	}
 }
 
 Set-Alias -name PathDel -Value Remove-FromPath -Description "Removes a directory from the path" -Force
