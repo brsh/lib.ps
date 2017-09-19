@@ -1,9 +1,9 @@
 ﻿<#
 .SYNOPSIS
     Creates PowerShell module skeleton files (psm and psd)
- 
+
 .DESCRIPTION
-    Creates a PowerShell module skeleton, complete with manifest and requisite folders (one for the module/manifest and the private subfolder) 
+    Creates a PowerShell module skeleton, complete with manifest and requisite folders (one for the module/manifest and the private subfolder)
 
 .PARAMETER Name
     Name of the script module
@@ -23,77 +23,86 @@
 
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory=$true)]
-    [string]$Name,
-        
-    [ValidateScript({
-        If (Test-Path -Path $_ -PathType Container) {
-            $true
-        }
-        else {
-            Throw "'$_' is not a valid directory."
-        }
-    })]
-    [String]$Path = (($env:PSModulePath).ToString().Split(";") -like "*\Users\*"),
+	[Parameter(Mandatory = $true)]
+	[string]$Name,
 
-    [Parameter(Mandatory=$false)]
-    [string]$Author,
+	[ValidateScript( {
+			If (Test-Path -Path $_ -PathType Container) {
+				$true
+			} else {
+				Throw "'$_' is not a valid directory."
+			}
+		})]
+	[String]$Path = (($env:PSModulePath).ToString().Split(";") -like "*\Users\*"),
 
-    [Parameter(Mandatory=$true)]
-    [string]$Description
+	[Parameter(Mandatory = $false)]
+	[string]$Author,
+
+	[Parameter(Mandatory = $true)]
+	[string]$Description
 )
 
 $Copyright = 'To the extent within my power and possible under law, the author(s) have dedicated all copyright and related and neighboring rights to the public domain worldwide. This is distributed without any warranty.'
 
 Try {
-    New-Item -Path $Path -Name $Name -ItemType Directory | Out-Null
-    New-Item -Path $Path\$Name -Name "private" -ItemType Directory | Out-Null
-}
-Catch {
-    "Could not create the directory structure."
-    $_.Exception.Message
-    return
+	New-Item -Path $Path -Name $Name -ItemType Directory | Out-Null
+	New-Item -Path $Path\$Name -Name "private" -ItemType Directory | Out-Null
+} Catch {
+	"Could not create the directory structure."
+	$_.Exception.Message
+	return
 }
 
 Try {
-    Out-File -FilePath "$Path\$Name\$Name.psm1" -Encoding utf8 -NoClobber
-}
-Catch {
-    "Could not create the Module file."
-    $_.Exception.Message
-    return
+	Out-File -FilePath "$Path\$Name\$Name.psm1" -Encoding utf8 -NoClobber
+} Catch {
+	"Could not create the Module file."
+	$_.Exception.Message
+	return
 }
 
-$Template = @'
+$Template = @"
 #region Private Variables
 # Current script path
-[string]$ScriptPath = Split-Path (get-variable myinvocation -scope script).value.Mycommand.Definition -Parent
+[string] `$ScriptPath = Split-Path (get-variable myinvocation -scope script).value.Mycommand.Definition -Parent
 #endregion Private Variables
- 
+
 #region Private Helpers
- 
+
 # Dot sourcing private script files
-Get-ChildItem $ScriptPath/private -Recurse -Filter "*.ps1" -File | Foreach { 
-    . $_.FullName
+Get-ChildItem `$ScriptPath/private -Recurse -Filter "*.ps1" -File | ForEach-Object {
+	. `$_.FullName
 }
 #endregion Load Private Helpers
-'@
+
+
+###################################################
+## END - Cleanup
+
+#region Module Cleanup
+`$ExecutionContext.SessionState.Module.OnRemove = {
+	# cleanup when unloading module (if any)
+	Get-ChildItem alias: | Where-Object { `$_.Source -match `"$($Name)`" } | Remove-Item
+    Get-ChildItem function: | Where-Object { `$_.Source -match `"$($Name)`" } | Remove-Item
+    Get-ChildItem variable: | Where-Object { `$_.Source -match `"$($Name)`" } | Remove-Item
+}
+#endregion Module Cleanup
+
+"@
 
 Try {
-    Add-Content -Path "$Path\$Name\$Name.psm1" -Value $Template
-}
-Catch {
-    "Could not add skeleton content to file."
-    $_.Exception.Message
-    return
+	Add-Content -Path "$Path\$Name\$Name.psm1" -Value $Template
+} Catch {
+	"Could not add skeleton content to file."
+	$_.Exception.Message
+	return
 }
 
 Try {
-    New-ModuleManifest -Path "$Path\$Name\$Name.psd1" -RootModule $Name -Author $Author -Description $Description `
-        -AliasesToExport $null -FunctionsToExport $null -VariablesToExport $null -CmdletsToExport $null -Copyright $Copyright
-}
-Catch {
-    "Could not create the manifest."
-    $_.Exception.Message
-    return
+	New-ModuleManifest -Path "$Path\$Name\$Name.psd1" -RootModule $Name -Author $Author -Description $Description `
+		-AliasesToExport $null -FunctionsToExport $null -VariablesToExport $null -CmdletsToExport $null -Copyright $Copyright
+} Catch {
+	"Could not create the manifest."
+	$_.Exception.Message
+	return
 }
