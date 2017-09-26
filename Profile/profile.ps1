@@ -1,25 +1,24 @@
 ﻿
 ###################### Declarations #####################
 
-$Global:IsAdmin=$False
-    if( ([System.Environment]::OSVersion.Version.Major -gt 5) -and ( # Vista and ...
-          new-object Security.Principal.WindowsPrincipal (
-             [Security.Principal.WindowsIdentity]::GetCurrent()) # current user is admin
-             ).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) )
-    {
-      $IsAdmin = $True
-    } else {
-      $IsAdmin = $False
-    }
+$Global:IsAdmin = $False
+if ( ([System.Environment]::OSVersion.Version.Major -gt 5) -and ( # Vista and ...
+		new-object Security.Principal.WindowsPrincipal (
+			[Security.Principal.WindowsIdentity]::GetCurrent()) # current user is admin
+	).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) ) {
+	$IsAdmin = $True
+} else {
+	$IsAdmin = $False
+}
 
-if(!$global:WindowTitlePrefix) {
-    # if you're running "elevated" we want to show that ...
-    If ($IsAdmin) {
-       $global:WindowTitlePrefix = "PowerShell (ADMIN)"
-    } else {
-       $global:WindowTitlePrefix = "PowerShell"
-    }
- }
+if (!$global:WindowTitlePrefix) {
+	# if you're running "elevated" we want to show that ...
+	If ($IsAdmin) {
+		$global:WindowTitlePrefix = "PowerShell (ADMIN)"
+	} else {
+		$global:WindowTitlePrefix = "PowerShell"
+	}
+}
 
 $Global:LibPath = $PSScriptRoot.Replace("\Profile", "")
 
@@ -27,102 +26,109 @@ $Global:LibPath = $PSScriptRoot.Replace("\Profile", "")
 
 # Dot sourcing private function and script files
 if (Test-Path $Global:LibPath\Profile\functions) {
-    Get-ChildItem $Global:LibPath\Profile\functions -Recurse -Filter "*.ps1" -File | Foreach { 
-        . $_.FullName
-    }
+	Get-ChildItem $Global:LibPath\Profile\functions -Recurse -Filter "*.ps1" -File | Foreach {
+		. $_.FullName
+	}
 }
 if (Test-Path $Global:LibPath\Profile\scripts) {
-    Get-ChildItem $Global:LibPath\Profile\scripts -Recurse -Filter "*.ps1" -File | Foreach { 
-        . $_.FullName
-    }
+	Get-ChildItem $Global:LibPath\Profile\scripts -Recurse -Filter "*.ps1" -File | Foreach {
+		. $_.FullName
+	}
 }
 
 function AddPSDefault([string]$name, $value) {
-    if ($PSVersionTable.PSVersion -ge '3.0') {
-        if ($PSDefaultParameterValues.Contains($name)) {
-            $PSDefaultParameterValues.Remove($name)
-        }
-        $PSDefaultParameterValues.Add($name, $value)
-    }
+	if ($PSVersionTable.PSVersion -ge '3.0') {
+		if ($PSDefaultParameterValues.Contains($name)) {
+			$PSDefaultParameterValues.Remove($name)
+		}
+		$PSDefaultParameterValues.Add($name, $value)
+	}
 }
 
 function Read-Profiles {
-#Reload all profiles - helpful when editing/testing profiles
-Set-Variable -name isDotSourced -value $False -Scope 0
-$isDotSourced = $MyInvocation.InvocationName -eq '.' -or $MyInvocation.Line -eq ''
-if (!($isDotSourced)) { write-host "You must dot source this function" -fore Red; write-host "`t. Load-Profiles`n`t. re-Profs" -ForegroundColor "Yellow"; return "" }
-    @(
-        $Profile.AllUsersAllHosts,
-        $Profile.AllUsersCurrentHost,
-        $Profile.CurrentUserAllHosts,
-        $Profile.CurrentUserCurrentHost
-    ) | ForEach-Object {
-        if(Test-Path $_){
-            Write-Host "Loading $_"
-            . $_
-        }
-    } 
+	#Reload all profiles - helpful when editing/testing profiles
+	Set-Variable -name isDotSourced -value $False -Scope 0
+	$isDotSourced = $MyInvocation.InvocationName -eq '.' -or $MyInvocation.Line -eq ''
+	if (!($isDotSourced)) { write-host "You must dot source this function" -fore Red; write-host "`t. Load-Profiles`n`t. re-Profs" -ForegroundColor "Yellow"; return "" }
+	@(
+		$Profile.AllUsersAllHosts,
+		$Profile.AllUsersCurrentHost,
+		$Profile.CurrentUserAllHosts,
+		$Profile.CurrentUserCurrentHost
+	) | ForEach-Object {
+		if (Test-Path $_) {
+			Write-Host "Loading $_"
+			. $_
+		}
+	}
 }
 
 New-Alias -name re-Profs -value Read-Profiles -Description "Reload profile files (must . source)" -Force
 
 #Defaults
-AddPSDefault "Format-Table:AutoSize" {if ($host.Name -eq 'ConsoleHost'){$true}}
+AddPSDefault "Format-Table:AutoSize" {if ($host.Name -eq 'ConsoleHost') {$true}}
+AddPSDefault "Get-Help:ShowWindow" $true
+AddPSDefault "Out-Default:OutVariable" "__"
 
 #(Attempt to) Keep duplicates out of History
 #Ah - I misunderstood this option
 #It doesn't keep dupes out of History; it keeps them from being returned more than 1ce
 Set-PSReadLineOption –HistoryNoDuplicates:$True
 
+Set-PSReadlineOption -AddToHistoryHandler {
+	Param($line)
+	#Adds a history handler to keep short lines and get-help requests out of up/down-arrow history
+	return ($line.length -ge 5 -AND $line -notmatch "^get-help|^help")
+}
+
 #####################  Actual Work  #####################
 
 #Modules
 if (test-path $Global:LibPath\Modules) {
-    Get-ChildItem $Global:LibPath\Modules *.psm1 -Recurse | ForEach-Object { Import-Module $_.FullName -force }
+	Get-ChildItem $Global:LibPath\Modules *.psm1 -Recurse | ForEach-Object { Import-Module $_.FullName -force }
 }
 
 #PSDrives
 if (test-path $Global:LibPath\Settings\psdrive.csv) {
-    import-csv $Global:LibPath\Settings\psdrive.csv | New-ProfilePSDrive
+	import-csv $Global:LibPath\Settings\psdrive.csv | New-ProfilePSDrive
 }
 
 if (Get-Service VMTools -ea SilentlyContinue) {
-    New-ProfilePSDrive -name VMHost -Location "\\vmware-host\Shared Folders\$env:username\scripts" -Description "VMHost scripts"
+	New-ProfilePSDrive -name VMHost -Location "\\vmware-host\Shared Folders\$env:username\scripts" -Description "VMHost scripts"
 }
 
 #Path Adjustments
 add-topath $libpath
 add-topath $libpath\scripts
 if (Test-Path $Global:LibPath\Settings\Add-ToPath.ini) {
-    # get-content $Global:LibPath\Settings\Add-ToPath.ini | Add-ToPath
-    Get-Content $Global:LibPath\Settings\Add-ToPath.ini | ForEach-Object { 
-        $p=@{}
-        $p.Directories = $_.split(",")[0]
-        $p.Recurse = [bool] $_.split(",")[1]
-        New-Object -TypeName psobject -Property $p 
-    } | Add-ToPath
+	# get-content $Global:LibPath\Settings\Add-ToPath.ini | Add-ToPath
+	Get-Content $Global:LibPath\Settings\Add-ToPath.ini | ForEach-Object {
+		$p = @{}
+		$p.Directories = $_.split(",")[0]
+		$p.Recurse = [bool] $_.split(",")[1]
+		New-Object -TypeName psobject -Property $p
+	} | Add-ToPath
 }
 if (Test-Path $Global:LibPath\Settings\remove-frompath.ini) {
-    get-content $Global:LibPath\Settings\remove-frompath.ini | Remove-FromPath
+	get-content $Global:LibPath\Settings\remove-frompath.ini | Remove-FromPath
 }
 
 ## Removes non-existent dirs from path
 (Get-SplitEnvPath | Where-Object { -not $_.Exists }).Path | Where-Object { $_ -ne $null } | Remove-FromPath
 
 #Only do these next items the first time (initial load)...
-if (!($isDotSourced)) { 
-    #Create the "standard" aliases for programs
-    Set-ProgramAliases
-    
-    #ShowHeader
-    $Global:SnewToIgnore = "prompt", "PSConsoleHostReadline", "posh-git"
-    Get-NewCommands
-    
-    GoHome
-    
-    if (test-path $LibPath\Clones\Get-ThisDayInHistory.ps\Get-ThisDayInHistory.ps1) { Get-ThisDayInHistory.ps1 }
-}
-else { 
-    #I hate littering the field with random variables
-    remove-item variable:\isDotSourced 
+if (!($isDotSourced)) {
+	#Create the "standard" aliases for programs
+	Set-ProgramAliases
+
+	#ShowHeader
+	$Global:SnewToIgnore = "prompt", "PSConsoleHostReadline", "posh-git"
+	#Get-NewCommands
+
+	GoHome
+
+	if (test-path $LibPath\Clones\Get-ThisDayInHistory.ps\Get-ThisDayInHistory.ps1) { Get-ThisDayInHistory.ps1 }
+} else {
+	#I hate littering the field with random variables
+	remove-item variable:\isDotSourced
 }
