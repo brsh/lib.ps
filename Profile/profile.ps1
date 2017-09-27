@@ -20,19 +20,27 @@ if (!$global:WindowTitlePrefix) {
 	}
 }
 
+if ($PSVersionTable.PSVersion.Major -eq 2) {
+	$PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+}
+
 $Global:LibPath = $PSScriptRoot.Replace("\Profile", "")
 
 ################### Inits ######################
 
 # Dot sourcing private function and script files
 if (Test-Path $Global:LibPath\Profile\functions) {
-	Get-ChildItem $Global:LibPath\Profile\functions -Recurse -Filter "*.ps1" -File | Foreach {
-		. $_.FullName
+	Get-ChildItem $Global:LibPath\Profile\functions -Recurse -Filter "*.ps1" | ForEach-Object {
+		if (-not $_.PSIsContainer) {
+			. $_.FullName
+		}
 	}
 }
 if (Test-Path $Global:LibPath\Profile\scripts) {
-	Get-ChildItem $Global:LibPath\Profile\scripts -Recurse -Filter "*.ps1" -File | Foreach {
-		. $_.FullName
+	Get-ChildItem $Global:LibPath\Profile\scripts -Recurse -Filter "*.ps1" | ForEach-Object {
+		if (-not $_.PSIsContainer) {
+			. $_.FullName
+		}
 	}
 }
 
@@ -70,22 +78,14 @@ AddPSDefault "Format-Table:AutoSize" {if ($host.Name -eq 'ConsoleHost') {$true}}
 AddPSDefault "Get-Help:ShowWindow" $true
 AddPSDefault "Out-Default:OutVariable" "__"
 
-#(Attempt to) Keep duplicates out of History
-#Ah - I misunderstood this option
-#It doesn't keep dupes out of History; it keeps them from being returned more than 1ce
-Set-PSReadLineOption –HistoryNoDuplicates:$True
-
-Set-PSReadlineOption -AddToHistoryHandler {
-	Param($line)
-	#Adds a history handler to keep short lines and get-help requests out of up/down-arrow history
-	return ($line.length -ge 5 -AND $line -notmatch "^get-help|^help")
-}
 
 #####################  Actual Work  #####################
 
 #Modules
-if (test-path $Global:LibPath\Modules) {
-	Get-ChildItem $Global:LibPath\Modules *.psm1 -Recurse | ForEach-Object { Import-Module $_.FullName -force }
+if ($PSVersionTable.PSVersion.Major -gt 2) {
+	if (test-path $Global:LibPath\Modules) {
+		Get-ChildItem $Global:LibPath\Modules *.psm1 -Recurse | ForEach-Object { Import-Module $_.FullName -force }
+	}
 }
 
 #PSDrives
