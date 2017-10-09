@@ -193,7 +193,7 @@ if (test-path $HomeFolder\lib.ps\Profile\profile.ps1) {
 			if (test-path ($profile).$_) {
 				if (Get-Content ($profile).$_ | Where-Object { $_.Contains("lib.ps") }) {
 					Write-Warning "Lib.ps exists in ($profile).$_ - Skipping."
-					"You might want to adjust the profile manually by adjusting with the following:"
+					"You might need to adjust the profile manually by adjusting with the following:"
 					$loadtext
 					$DoUpdateProfile = $false
 				}
@@ -210,15 +210,15 @@ if (test-path $HomeFolder\lib.ps\Profile\profile.ps1) {
 		$loadtext
 	}
 	Set-Location $HomeFolder
-	. Read-Profiles
 }
 
 if ($pscmdlet.ShouldProcess("Standard Modules/Scripts", "Cloning Sub-Repositories")) {
 	if (test-path ".\lib.ps\Scripts\Reset-Clones.ps1") {
+		if (-not (test-path $HomeFolder\lib.ps\Clones)) {mkdir $HomeFolder\lib.ps\Clones }
+		if (-not (test-path $HomeFolder\lib.ps\Modules)) {	mkdir $HomeFolder\lib.ps\Modules }
 		.\lib.ps\Scripts\Reset-Clones.ps1 -Folder $HomeFolder\lib.ps
 	}
 	Set-Location $HomeFolder
 }
 
-
-
+if ($DoUpdateProfile) { . Read-Profiles }
