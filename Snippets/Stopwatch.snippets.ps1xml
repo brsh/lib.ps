@@ -1,0 +1,35 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+    <Snippets  xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
+        <Snippet Version='1.0.0'>
+            <Header>
+                <Title>Stopwatch</Title>
+                <Description>Create a stopwatch timer</Description>
+                <Author></Author>
+                <SnippetTypes>
+                    <SnippetType>Expansion</SnippetType>
+                </SnippetTypes>
+            </Header>
+
+            <Code>
+                <Script Language='PowerShell' CaretOffset='0'>
+                    <![CDATA[$timer =  [system.diagnostics.stopwatch]::StartNew()
+$timer.IsRunning
+
+while ($timer.Elapsed.TotalSeconds -lt 10) {
+  ## Do some stuff here
+  ## Wait a specific interval
+  Start-Sleep -Seconds 1
+  ## Check the time
+  $totalSecs =  [math]::Round($timer.Elapsed.TotalSeconds,0)
+  Write-Verbose -Message "Still waiting after $totalSecs seconds..."
+}
+
+$timer.Stop()
+$timer.IsRunning
+]]>
+                </Script>
+            </Code>
+
+    </Snippet>
+</Snippets>
+
