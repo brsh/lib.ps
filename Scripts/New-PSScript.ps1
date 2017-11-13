@@ -1,9 +1,9 @@
 ﻿<#
 .SYNOPSIS
     Creates PowerShell script skeleton file (ps1)
- 
+
 .DESCRIPTION
-    Creates a PowerShell script skeleton, complete with initial Comment Help section and basic param options. 
+    Creates a PowerShell script skeleton, complete with initial Comment Help section and basic param options.
 
 .PARAMETER Name
     Name of the script
@@ -26,59 +26,73 @@
 
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
-    [Alias('FileName')]
-    [string]$Name,
-    [Parameter(Mandatory=$false)]
-    [ValidateScript({
-        If (Test-Path -Path $_ -PathType Container) {
-            $true
-        }
-        else {
-            Throw "'$_' is not a valid directory."
-        }
-    })]
-    [Alias('Directory','Folder')]
-    [String]$Path = ($pwd.ProviderPath),
-    [Parameter(Mandatory=$false)]
-    [string]$Synopsis
+	[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+	[Alias('FileName')]
+	[string]$Name,
+	[Parameter(Mandatory = $false)]
+	[ValidateScript( {
+			If (Test-Path -Path $_ -PathType Container) {
+				$true
+			} else {
+				Throw "'$_' is not a valid directory."
+			}
+		})]
+	[Alias('Directory', 'Folder')]
+	[String]$Path = ($pwd.ProviderPath),
+	[Parameter(Mandatory = $false)]
+	[string]$Synopsis
 )
 
 if (-not $Name.ToUpper().EndsWith(".PS1")) { $Name = $Name.Trim() + ".ps1" }
 
 Try {
-    Out-File -FilePath "$Path\$Name" -Encoding utf8 -NoClobber
-}
-Catch {
-    "Unable to create file in the path specified."
-    $_.Exception.Message
-    return
+	Out-File -FilePath "$Path\$Name" -Encoding utf8 -NoClobber
+} Catch {
+	"Unable to create file in the path specified."
+	$_.Exception.Message
+	return
 }
 
 $Template = @"
+
+<#PSScriptInfo
+.VERSION 1.0
+.GUID $(New-GUID)
+.AUTHOR name
+.COMPANYNAME Company
+.COPYRIGHT
+.TAGS
+.LICENSEURI
+.PROJECTURI
+.ICONURI
+.EXTERNALMODULEDEPENDENCIES
+.REQUIREDSCRIPTS
+.EXTERNALSCRIPTDEPENDENCIES
+.RELEASENOTES
+#>
+
 <#
 .SYNOPSIS
-    $Synopsis
- 
+$Synopsis
+
 .DESCRIPTION
-    Description
+Description
 
 .PARAMETER Name
-    Parameter Description
+Parameter Description
 
 .EXAMPLE
-     $Name -Parameter
+$Name -Parameter
 
 #>
 "@
 
 Try {
-    Add-Content -Path "$Path\$Name" -Value $Template
-}
-Catch {
-    "Could not add skeleton Help content to file."
-    $_.Exception.Message
-    return
+	Add-Content -Path "$Path\$Name" -Value $Template
+} Catch {
+	"Could not add skeleton Help content to file."
+	$_.Exception.Message
+	return
 }
 
 $Template = @'
@@ -100,10 +114,9 @@ END { }
 '@
 
 Try {
-    Add-Content -Path "$Path\$Name" -Value $Template
-}
-Catch {
-    "Could not add skeleton content to file."
-    $_.Exception.Message
-    return
+	Add-Content -Path "$Path\$Name" -Value $Template
+} Catch {
+	"Could not add skeleton content to file."
+	$_.Exception.Message
+	return
 }

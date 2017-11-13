@@ -1,4 +1,20 @@
-﻿<#
+﻿<#PSScriptInfo
+.VERSION 1.0
+.GUID 52a851cf-be7b-4a16-8dea-7cbf836f3c40
+.AUTHOR bsheaffer
+.COMPANYNAME
+.COPYRIGHT
+.TAGS
+.LICENSEURI https://github.com/brsh/lib.ps/blob/master/LICENSE.md
+.PROJECTURI
+.ICONURI
+.EXTERNALMODULEDEPENDENCIES
+.REQUIREDSCRIPTS
+.EXTERNALSCRIPTDEPENDENCIES
+.RELEASENOTES
+#>
+
+<#
 .SYNOPSIS
     Find Version Numbers for .Net Framework
 
@@ -93,7 +109,9 @@ if (test-path 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\1033\') 
 		394806 { $Name = "v4.6"; $Version = "4.6.2" }
 		460798 { $Name = "v4.7 on Windows 10 CU"; $Version = "4.7" }
 		460805 { $Name = "v4.7"; $Version = "4.7" }
-		{$_ -gt 460805} { $Name = "See $($website)"; $Version = "Greater than 4.7" }
+		461308 { $Name = "v4.7.1 on Windows 10 FCU"; $Version = "4.7.1" }
+		461310 { $Name = "v4.7.1"; $Version = "4.7.1" }
+		{$_ -gt 461310} { $Name = "See $($website)"; $Version = "Greater than 4.7.1" }
 		Default { $Name = "Uncertain"; $Version = $_ }
 	}
 	Out-VersionObject -name $Name -Version $Version -SP "n/a" -Code $Code
