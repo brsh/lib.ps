@@ -35,7 +35,7 @@ param (
 
 #For Writing/Troubleshooting purposes (and because I forget to set it at runtime)
 #$VerbosePreference = "Continue"
-#$VerbosePreference="SilentlyContinue"
+#$VerbosePreference = "SilentlyContinue"
 
 Function Read-Profiles {
 	#Reload all profiles - helpful when editing/testing profiles
@@ -203,6 +203,7 @@ if (test-path $HomeFolder\lib.ps\Profile\profile.ps1) {
 			if (-not (test-path $profile)) { $null = New-item –type file –force $profile }
 			$loadtext | Out-File -Append -FilePath $profile -Force
 		}
+		. Read-Profiles
 	} Catch {
 		Write-Warning "Couldn't update $profile"
 		$_
