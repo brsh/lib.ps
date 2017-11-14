@@ -127,7 +127,8 @@ if (!($isDotSourced)) {
 
 	GoHome
 
-	if (test-path $LibPath\Clones\Get-ThisDayInHistory.ps\Get-ThisDayInHistory.ps1) { Get-ThisDayInHistory.ps1 }
+	if (test-path $LibPath\Clones\Get-Excuse\Get-Excuse.ps1) { Write-Host $(& $LibPath\Clones\Get-Excuse\Get-Excuse.ps1 -Format) -ForegroundColor Yellow }
+	if (test-path $LibPath\Clones\Get-ThisDayInHistory.ps\Get-ThisDayInHistory.ps1) { & $LibPath\Clones\Get-ThisDayInHistory.ps\Get-ThisDayInHistory.ps1 -FormatIt }
 } else {
 	#I hate littering the field with random variables
 	remove-item variable:\isDotSourced
