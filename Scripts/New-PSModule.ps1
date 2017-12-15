@@ -110,6 +110,10 @@ Get-ChildItem `$ScriptPath/public -Recurse -Filter "*.ps1" -File | ForEach-Objec
 }
 #endregion Load public Helpers
 
+if (test-path `$ScriptPath\formats\$($Name).format.ps1xml) {
+	Update-FormatData `$ScriptPath\formats\$($Name).format.ps1xml
+}
+
 Get-$(${Name})Help
 
 
@@ -171,7 +175,7 @@ Function Get-$(${Name})Help {
 
 Try {
 	write-verbose 'Creating Help/Information File'
-	Add-Content -Path "$Path\$Name\public\Information.psm1" -Value $HelpTemplate
+	Add-Content -Path "$Path\$Name\public\Information.ps1" -Value $HelpTemplate
 	Write-Verbose '  Success'
 } Catch {
 	"Could not add skeleton help content to file."
