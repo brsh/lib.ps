@@ -13,7 +13,7 @@ function Get-HTMLResponseCodes {
 	} else { "None found." }
 }
 
-set-alias -name htmlcodes -value Get-HTMLResponseCodes -Description "List entries in the Hosts file" -Force
+set-alias -name htmlcodes -value Get-HTMLResponseCodes -Description "List various HTML response codes (200 - ok)" -Force
 
 function Get-DataTypes {
 	[CmdletBinding()]
@@ -27,4 +27,11 @@ function Get-DataTypes {
 	$types | Sort-Object key | Select-Object key | ForEach-Object { $_.key.ToString().Trim() }
 }
 
-set-alias -name types -value Get-DataTypes -Description "List entries in the Hosts file" -Force
+set-alias -name types -value Get-DataTypes -Description "List the data types" -Force
+
+function Get-HtmlColors {
+	Add-Type -AssemblyName PresentationFramework
+	[System.Windows.Media.Colors].GetProperties() | Select-Object Name, @{n="Hex";e={$_.GetValue($null).ToString()}}
+}
+
+set-alias -name htmlcolors -value Get-HtmlColors -Description "List colors by name and hex code" -Force
