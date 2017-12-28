@@ -159,7 +159,7 @@ Function Get-$(${Name})Help {
 	`$all = @()
 	`$list = Get-Command -Type function -Module "DeploymentServices" | Where-Object { `$_.Name -in `$script:showhelp}
 	`$list | ForEach-Object {
-		`$RetHelp = Get-help $_.Name -ShowWindow:`$false -ErrorAction SilentlyContinue
+		`$RetHelp = Get-help `$_.Name -ShowWindow:`$false -ErrorAction SilentlyContinue
 		if (`$RetHelp.Description) {
 			`$Infohash = @{
 				Command     = `$_.Name
