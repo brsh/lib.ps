@@ -84,7 +84,7 @@ AddPSDefault "Out-Default:OutVariable" "__"
 #Modules
 if ($PSVersionTable.PSVersion.Major -gt 2) {
 	if (test-path $Global:LibPath\Modules) {
-		Get-ChildItem $Global:LibPath\Modules *.psm1 -Recurse | ForEach-Object { Import-Module $_.FullName -force }
+		Get-ChildItem $Global:LibPath\Modules *.psm1 -Recurse | ForEach-Object { Import-Module $_.FullName -force -ArgumentList $true }
 	}
 }
 
