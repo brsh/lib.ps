@@ -47,12 +47,15 @@ if ($pscmdlet.ShouldProcess("LibPS", "Cloning Repository")) {
 		}
 
 		"Cloning the default scripts ($Folder\Settings\Get-Git-Clones.ini):"
-		get-content $Folder\Settings\Get-Git-Clones.ini | ForEach-Object { "    $_" }
-		get-content $Folder\Settings\Get-Git-Clones.ini | get-GitModule.ps1 -Destination $Folder\Clones -ReadOnly -Force -Verbose
+		get-content $Folder\Settings\Get-Git-Clones.ini | ForEach-Object {
+			& $LibPath\Scripts\Get-GitModule.ps1 -URLPath $_ -Destination $Folder\Clones -ReadOnly -Force -Verbose
+		}
+
 
 		"Cloning the default Modules ($Folder\Settings\Get-Git-Modules.ini):"
-		get-content $Folder\Settings\Get-Git-Modules.ini | ForEach-Object { "    $_" }
-		get-content $Folder\Settings\Get-Git-Modules.ini | get-GitModule.ps1 -Destination $Folder\Modules -ReadOnly -Force -Verbose
+		get-content $Folder\Settings\Get-Git-Modules.ini | ForEach-Object {
+			& $LibPath\Scripts\Get-GitModule.ps1 -URLPath $_ -Destination $Folder\Modules -ReadOnly -Force -Verbose
+		}
 
 	} else {
 		"Please run this script as an Administrator"
