@@ -116,3 +116,40 @@ if (test-path 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\1033\') 
 	}
 	Out-VersionObject -name $Name -Version $Version -SP "n/a" -Code $Code
 }
+
+$core = get-command -Name dotnet.exe -ErrorAction SilentlyContinue
+if ($core) {
+	$core | ForEach-Object {
+		try {
+			$result = & $_.Name --info
+			if ($result) {
+				$result = $result | ForEach-Object { if ($_) { $_ } }
+				$CLI = $result | Select-String "Command Line Tools" -Context 3 -List
+				if ($CLI) {
+					$ver = $CLI[0].Context.PostContext | Select-String "Version"
+					$ver = $ver.Line.Split(":")[1].Trim()
+					$hash = $CLI[0].Context.PostContext | Select-String "hash"
+					$hash = $hash.Line.Split(":")[1].Trim()
+					$name = $CLI[0].Line
+					if ($name) {
+						Out-VersionObject -Name $name -Version $ver -SP "n/a" -Code $hash
+					}
+				}
+				$Frame = $result | Select-String "Framework Host" -Context 0, 3 -List
+				if ($Frame) {
+					$ver = $Frame[0].Context.PostContext | Select-String "Version"
+					$ver = $ver.Line.Split(":")[1].Trim()
+					$hash = $Frame[0].Context.PostContext | Select-String "build"
+					$hash = $hash.Line.Split(":")[1].Trim()
+					$name = $Frame.Line
+					if ($name) {
+						Out-VersionObject -Name $name -Version $ver -SP "n/a" -Code $hash
+					}
+				}
+			}
+		} catch {
+			Write-Verbose "Could not process/parse .Net Core via 'dotnet --info'"
+		}
+	}
+}
+
