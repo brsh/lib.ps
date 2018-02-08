@@ -20,18 +20,27 @@ function Invoke-GuiHistory {
 
 set-alias -name hist -value Invoke-GuiHistory -Description "A GUI History command runner" -Force
 
+function Edit-History {
+	[string] $HistFile = ''
+	try {
+		$HistFile = (Get-PSReadlineOption).HistorySavePath
+		$HistFile = (Resolve-Path "$env:userprofile\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt").Path
+		if (Test-Path $HistFile) {
+			& notepad.exe $HistFile
+		} else {
+			write-host "Path to History file is not valid:" -ForegroundColor Yellow
+			write-host "  $HistFile" -ForegroundColor Yellow
+		}
+	} catch {
+		Write-Host "Error accessing PSReadline; maybe it's not present" -ForegroundColor Yellow
+	}
+}
+
 if (get-module -name PSReadline) {
 	#(Attempt to) Keep duplicates out of History
 	#Ah - I misunderstood this option
 	#It doesn't keep dupes out of History; it keeps them from being returned more than 1ce
 	Set-PSReadLineOption -HistoryNoDuplicates:$True
-
-	Set-PSReadlineOption -AddToHistoryHandler {
-		Param($line)
-		#Adds a history handler to keep short lines and get-help requests out of up/down-arrow history
-		($line.length -ge 5 -AND $line -notmatch '^get-help|^help')
-	}
-
 
 	Set-PSReadlineKeyHandler -Key F7 -BriefDescription HistoryList -Description 'Show command history with Out-Gridview' -ScriptBlock { Invoke-GuiHistory }
 
