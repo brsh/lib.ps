@@ -82,6 +82,9 @@ Try {
 }
 
 $Template = @"
+param (
+    [switch] $Quiet = $false
+)
 #region Private Variables
 # Current script path
 [string] `$ScriptPath = Split-Path (get-variable myinvocation -scope script).value.Mycommand.Definition -Parent
@@ -114,8 +117,9 @@ if (test-path `$ScriptPath\formats\$($Name).format.ps1xml) {
 	Update-FormatData `$ScriptPath\formats\$($Name).format.ps1xml
 }
 
-Get-$(${Name})Help
-
+if (-not $Quiet) {
+    Get-$(${Name})Help
+}
 
 ###################################################
 ## END - Cleanup
@@ -157,7 +161,7 @@ Function Get-$(${Name})Help {
 	Write-Host "Getting available functions..." -ForegroundColor Yellow
 
 	`$all = @()
-	`$list = Get-Command -Type function -Module "DeploymentServices" | Where-Object { `$_.Name -in `$script:showhelp}
+	`$list = Get-Command -Type function -Module "$($Name)" | Where-Object { `$_.Name -in `$script:showhelp}
 	`$list | ForEach-Object {
 		`$RetHelp = Get-help `$_.Name -ShowWindow:`$false -ErrorAction SilentlyContinue
 		if (`$RetHelp.Description) {
