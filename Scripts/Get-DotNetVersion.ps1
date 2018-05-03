@@ -111,7 +111,9 @@ if (test-path 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\1033\') 
 		460805 { $Name = "v4.7"; $Version = "4.7" }
 		461308 { $Name = "v4.7.1 on Windows 10 FCU"; $Version = "4.7.1" }
 		461310 { $Name = "v4.7.1"; $Version = "4.7.1" }
-		{$_ -gt 461310} { $Name = "See $($website)"; $Version = "Greater than 4.7.1" }
+		461808 { $Name = "v4.7.2 on Windows 10 U18.04"; $Version = "4.7.2" }
+		461814 { $Name = "v4.7.2"; $Version = "4.7.2" }
+		{$_ -gt 461814} { $Name = "See $($website)"; $Version = "Greater than 4.7.2" }
 		Default { $Name = "Uncertain"; $Version = $_ }
 	}
 	Out-VersionObject -name $Name -Version $Version -SP "n/a" -Code $Code
@@ -143,7 +145,7 @@ if ($core) {
 					$hash = $hash.Line.Split(":")[1].Trim()
 					$name = $Frame.Line
 					if ($name) {
-						Out-VersionObject -Name $name -Version $ver -SP "n/a" -Code $hash
+						Out-VersionObject -Name $name.Replace('Microsoft', '').Trim() -Version $ver -SP "n/a" -Code $hash
 					}
 				}
 			}
