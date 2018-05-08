@@ -94,7 +94,7 @@ if (test-path $Global:LibPath\Settings\psdrive.csv) {
 	import-csv $Global:LibPath\Settings\psdrive.csv | New-ProfilePSDrive
 }
 
-if (Get-Service VMTools -ea SilentlyContinue) {
+if (Get-Service VMTools -ea Ignore) {
 	New-ProfilePSDrive -name VMHost -Location "\\vmware-host\Shared Folders\$env:username\scripts" -Description "VMHost scripts"
 }
 
