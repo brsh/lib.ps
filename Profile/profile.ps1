@@ -11,15 +11,6 @@ if ( ([System.Environment]::OSVersion.Version.Major -gt 5) -and ( # Vista and ..
 	$IsAdmin = $False
 }
 
-if (!$global:WindowTitlePrefix) {
-	# if you're running "elevated" we want to show that ...
-	If ($IsAdmin) {
-		$global:WindowTitlePrefix = "PowerShell (ADMIN)"
-	} else {
-		$global:WindowTitlePrefix = "PowerShell"
-	}
-}
-
 if ($PSVersionTable.PSVersion.Major -eq 2) {
 	$PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 }
