@@ -49,8 +49,17 @@ param (
     [Parameter(Mandatory=$false,ParameterSetName='Seconds')]
     [int] $Seconds = 1,
     [Parameter(Mandatory=$false,ParameterSetName='MilliSeconds')]
-    [int] $Milliseconds = 0
+    [int] $Milliseconds = 0,
+    [Switch] $Up = $false
 )
+
+function Write-StatusLine {
+    param ($count)
+    Write-Host "`r" -NoNewline
+    Write-Host $StatusMessage -NoNewline -ForegroundColor Green
+    Write-Host -NoNewLine "$count".PadLeft($Durationlength) -ForegroundColor yellow
+    if ($Milliseconds -gt 0) { Start-Sleep -Milliseconds $Milliseconds } else { Start-Sleep -Seconds $Seconds }
+}
 
 #Let's keep the message all on one line (not that you'd ever send too long a line ...)
 [int] $Durationlength = $Duration.ToString().Length + 2
@@ -61,11 +70,14 @@ if ($StatusMessage.Length -gt $screenwidth) {
 }
 if ($StatusMessage.Length -gt 0) { $CompletionMessage = " " + $CompletionMessage }
 
-for ($a=0; $a -le $Duration; $a++) {
-    Write-Host "`r" -NoNewline
-    Write-Host $StatusMessage -NoNewline -ForegroundColor Green
-    Write-Host -NoNewLine "$a".PadLeft($Durationlength) -ForegroundColor yellow
-    if ($Milliseconds -gt 0) { Start-Sleep -Milliseconds $Milliseconds } else { Start-Sleep -Seconds $Seconds }
+if ($Up) {
+    for ($a=1; $a -le $Duration; $a++) {
+        Write-StatusLine -count $a
+    }
+} else {
+    for ($a=$Duration; $a -ge 1; $a--) {
+        Write-StatusLine -count $a
+    }
 }
 Write-Host "`r" -NoNewline
 Write-Host $StatusMessage -NoNewline -ForegroundColor White
