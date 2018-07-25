@@ -108,12 +108,14 @@ if (Test-Path $Global:LibPath\Settings\remove-frompath.ini) {
 ## Removes non-existent dirs from path
 (Get-SplitEnvPath | Where-Object { -not $_.Exists }).Path | Where-Object { $_ -ne $null } | Remove-FromPath
 
-## Allow higher protocols with invoke-webreq and -restmeth
-[System.Enum]::GetValues('Net.SecurityProtocolType') |
-    Where-Object { $_ -gt [System.Math]::Max( [Net.ServicePointManager]::SecurityProtocol.value__, [Net.SecurityProtocolType]::Tls.value__ ) } |
-    ForEach-Object {
-        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor $_
-    }
+if ($PSVersionTable.PSVersion.Major -lt 6) {
+	## Allow higher protocols with invoke-webreq and -restmeth
+	[System.Enum]::GetValues('Net.SecurityProtocolType') |
+		Where-Object { $_ -gt [System.Math]::Max( [Net.ServicePointManager]::SecurityProtocol.value__, [Net.SecurityProtocolType]::Tls.value__ ) } |
+		ForEach-Object {
+		[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor $_
+	}
+}
 
 #Only do these next items the first time (initial load)...
 if (!($isDotSourced)) {

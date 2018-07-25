@@ -83,7 +83,7 @@ Try {
 
 $Template = @"
 param (
-    [switch] $Quiet = $false
+    [switch] `$Quiet = `$False
 )
 #region Private Variables
 # Current script path
@@ -117,7 +117,7 @@ if (test-path `$ScriptPath\formats\$($Name).format.ps1xml) {
 	Update-FormatData `$ScriptPath\formats\$($Name).format.ps1xml
 }
 
-if (-not $Quiet) {
+if (-not `$Quiet) {
     Get-$(${Name})Help
 }
 
