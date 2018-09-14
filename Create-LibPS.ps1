@@ -200,7 +200,7 @@ if (test-path $HomeFolder\lib.ps\Profile\profile.ps1) {
 			}
 		}
 		if ($DoUpdateProfile) {
-			if (-not (test-path $profile)) { $null = New-item –type file –force $profile }
+			if (-not (test-path $profile)) { $null = New-item -type file -force $profile }
 			$loadtext | Out-File -Append -FilePath $profile -Force
 		}
 		. Read-Profiles
