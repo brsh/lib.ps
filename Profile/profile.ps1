@@ -77,7 +77,7 @@ function Write-DebugMessage {
 }
 
 $Global:IsAdmin = $False
-if ($IsDebug) { Write-DebugMessage @('IsAdmin: Testing', 'test array') }
+if ($IsDebug) { Write-DebugMessage 'IsAdmin: Testing' }
 if ( ([System.Environment]::OSVersion.Version.Major -gt 5) -and ( # Vista and ...
 		new-object Security.Principal.WindowsPrincipal (
 			[Security.Principal.WindowsIdentity]::GetCurrent()) # current user is admin
