@@ -155,7 +155,7 @@ AddPSDefault "Out-Default:OutVariable" "__"
 if ($PSVersionTable.PSVersion.Major -gt 2) {
 	if (test-path $Global:LibPath\Modules) {
 		$env:PSModulePath = $env:PSModulePath + ";$LibPath\Modules"
-		Get-ChildItem $Global:LibPath\Modules *.psm1 -Recurse | ForEach-Object {
+		Get-ChildItem $Global:LibPath\Modules *.psd1 -Recurse | ForEach-Object {
 			if ($IsDebug) { Write-DebugMessage "Modules: Importing $($_.Name)" }
 			Import-Module $_.FullName -force -ArgumentList $true
 		}
