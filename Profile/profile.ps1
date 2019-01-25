@@ -206,7 +206,7 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 } else {
 	#Test PSCore version
 	if (Test-Path "${libpath}\scripts\Get-PSCoreVersion.ps1") {
-		Invoke-Expression "{ $null = $libpath\scripts\Get-PSCoreVersion.ps1 -quiet}"
+		Invoke-Expression "$libpath\scripts\Get-PSCoreVersion.ps1 -noobject"
 	}
 }
 
