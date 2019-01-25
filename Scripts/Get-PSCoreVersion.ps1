@@ -37,8 +37,8 @@ $PSCoreURI = 'https://github.com/powershell/powershell'
 
 if ($PSVersionTable.PSVersion.Major -lt 6) {
 	if (-not $Quiet) {
-		Write-Host "This is Windows Powershell... PSCore will always be newer than this."
-		Write-Host $PSCoreURI
+		Write-Host "This is Windows Powershell... PSCore will always be newer than this." -ForegroundColor Green
+		Write-Host $PSCoreURI -ForegroundColor Green
 	}
 } else {
 	#Using this to get rid of the nasty output Invoke-WebRequest gives you in PowerShell on the Mac
@@ -50,17 +50,17 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 	$JSON = Invoke-WebRequest 'https://api.github.com/repos/powershell/powershell/releases/latest' | ConvertFrom-Json
 	if ($PSVersionTable.GitCommitId) {
 		if (($JSON.tag_name -replace '\D', '') -notmatch ($PSVersionTable.GitCommitId -replace '\D', '')) {
-			Write-Host "New version of PowerShell available! Specifically, $($JSON.tag_name)"
-			Write-Host $PSCoreURI
+			Write-Host "New version of PowerShell available! Specifically, $($JSON.tag_name)"  -ForegroundColor Yellow
+			Write-Host $PSCoreURI -ForegroundColor Green
 			if ($ReleaseInfo) {
 				Write-Host $JSON.body
 			}
 		} else {
-			if (-not $Quiet) {Write-Host 'PowerShell Core is currently up to date.'}
+			if (-not $Quiet) {Write-Host 'PowerShell Core is currently up to date.' -ForegroundColor Green }
 		}
 	}
 	if ($Quiet) {
 		$ProgressPreference = $progress
 	}
 }
-if (-not $NoObject) { $PSVersionTable.PSVersion }
+if (-not $NoObject) { $PSVersionTable.PSVersion } else { write-host '' }
