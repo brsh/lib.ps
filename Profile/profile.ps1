@@ -203,6 +203,11 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 		ForEach-Object {
 		[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor $_
 	}
+} else {
+	#Test PSCore version
+	if (Test-Path "${libpath}\scripts\Get-PSCoreVersion.ps1") {
+		Invoke-Expression "{ $null = $libpath\scripts\Get-PSCoreVersion.ps1 -quiet}"
+	}
 }
 
 #Only do these next items the first time (initial load)...
