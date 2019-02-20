@@ -1,5 +1,5 @@
 ﻿<#PSScriptInfo
-.VERSION 1.0
+.VERSION 1.1
 .GUID 52a851cf-be7b-4a16-8dea-7cbf836f3c40
 .AUTHOR bsheaffer
 .COMPANYNAME
@@ -14,33 +14,49 @@
 .RELEASENOTES
 #>
 
+
 <#
 .SYNOPSIS
-    Find Version Numbers for .Net Framework
+    Find Version Numbers for installed .Net Framework(s)
 
 .DESCRIPTION
-    Outputs a table of the currently installed versions of the .Net Framework (current as of 4.6.2 and Dec. 8, 2016). It lists the Framework Name, the actual version of that Framework, and any install Service Pack (if applicable).
+    Outputs a table of the currently installed versions of the .Net Framework
+	(current as of 4.7.2 and Core 2.2.2 and Feb. 20, 2019). It lists the
+	Framework/Component Name, the actual version of that Framework/Component,
+	and any install Service Pack (if applicable).
 
     Please note the following:
         1.0 and 1.1 don't exist anymore, so don't look for them
         2.0 covers for versions 1 and 1.1 (which still don't exist; get over it)
         3.5 includes versions 3.0 and 2.0 (and, thence, 1.1 and 1.0 - but really, just let them go already)
         4.0 is deprecated, obfuscated, emulated, and actually the installed version of 4.5, 4.6, 4.7, etc.
+		.Net Core has SO MANY .. um .. a lot of components with versions ... and it's getting to be worse than non-Core!
+
+	The .Net Core processing does not work on Powershell on PowerShell v2, but c'mon - you're not really running this on v2, are you?
 
 .LINK
     https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
+	https://github.com/brsh/lib.ps
 
 .EXAMPLE
     PS C:\> .\Get-DotNetVersion.ps1
 
-    Name        Version        SP
-    ----        -------        --
-    v2.0.50727  2.0.50727.4927 2
-    v3.0        3.0.30729.4926 2
-    v3.5        3.5.30729.4926 1
-    v4.0 Client 4.6.01586      n/a
-    v4.0 Full   4.6.01586      n/a
-    v4.6        4.6.2          n/a
+    Name                              Version        SP  Code
+	----                              -------        --  ----
+	v2.0.50727                        2.0.50727.4927 2   n/a
+	v3.0                              3.0.30729.4926 2   n/a
+	v3.5                              3.5.30729.4926 1   n/a
+	v4.0 Client                       4.7.03190      n/a 461814
+	v4.0 Full                         4.7.03190      n/a 461814
+	v4.7.2                            4.7.2          n/a 461814
+	.NET Command Line Tools (2.1.103) 2.1.103        n/a 60218cecb5
+	.NET Core Host                    2.2.2          n/a a4fd7b2c84
+	.NET Core SDK                     2.1.2          n/a
+	.NET Core SDK                     2.1.103        n/a
+	.NET Core RunTime                 2.0.3          n/a
+	.NET Core RunTime                 2.0.6          n/a
+	.NET Core RunTime                 2.2.1          n/a
+	.NET Core RunTime                 2.2.2          n/a
 #>
 
 
@@ -148,9 +164,44 @@ if ($core) {
 						Out-VersionObject -Name $name.Replace('Microsoft', '').Trim() -Version $ver -SP "n/a" -Code $hash
 					}
 				}
+				$Hostver = $result | Select-String "^Host " -Context 0, 2 -List
+				if ($Hostver) {
+					$ver = $Hostver[0].Context.PostContext | Select-String "Version"
+					$ver = $ver.Line.Split(":")[1].Trim()
+					$hash = $Hostver[0].Context.PostContext | Select-String "commit"
+					$hash = $hash.Line.Split(":")[1].Trim()
+					$name = ".NET Core $($Hostver.Line.Replace(' (useful for support)', '').Replace(':', ''))"
+					if ($name) {
+						Out-VersionObject -Name $name.Replace('Microsoft', '').Trim() -Version $ver -SP "n/a" -Code $hash
+					}
+				}
+				$SDK = $result | Select-String "dotnet\\sdk]$" -List
+				if ($SDK) {
+					$sdk | ForEach-Object {
+						$ver = ($_.ToString().Trim() -split ' ')[0]
+						$name = ".NET Core SDK"
+						if ($ver) {
+							Out-VersionObject -Name $name -Version $ver -SP "n/a" -Code ''
+						}
+					}
+				}
+				$Runtime = $result | Select-String "Microsoft.NETCore.App" -List
+				if ($Runtime) {
+					$Runtime | ForEach-Object {
+						$ver = ($_.ToString().Trim() -split ' ')[1]
+						$name = ".NET Core RunTime"
+						if ($ver) {
+							Out-VersionObject -Name $name -Version $ver -SP "n/a" -Code ''
+						}
+					}
+				}
 			}
 		} catch {
-			Write-Verbose "Could not process/parse .Net Core via 'dotnet --info'"
+			Write-Host ''
+			Write-Host "Could not process/parse .Net Core via 'dotnet --info'" -ForegroundColor Yellow
+			if ($PSVersionTable.PSVersion.Major -eq 2) {
+				Write-Host '  Why are you still running PowerShell v2?!?!' -ForegroundColor Red
+			}
 		}
 	}
 }
