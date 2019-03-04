@@ -163,7 +163,11 @@ Function Get-$(${Name})Help {
 	`$all = @()
 	`$list = Get-Command -Type function -Module "$($Name)" | Where-Object { `$_.Name -in `$script:showhelp}
 	`$list | ForEach-Object {
-		`$RetHelp = Get-help `$_.Name -ShowWindow:`$false -ErrorAction SilentlyContinue
+        if (`$PSVersionTable.PSVersion.Major -lt 6) {
+		  `$RetHelp = Get-help `$_.Name -ShowWindow:`$false -ErrorAction SilentlyContinue
+        } else {
+            `$RetHelp = Get-help `$_.Name -ErrorAction SilentlyContinue
+        }
 		if (`$RetHelp.Description) {
 			`$Infohash = @{
 				Command     = `$_.Name
@@ -173,7 +177,7 @@ Function Get-$(${Name})Help {
 			`$all += `$out
 		}
 	}
-	`$all | format-table -Wrap -AutoSize | Out-String | Write-Host
+	`$all | Select-Object Command, Description | format-table -Wrap -AutoSize | Out-String | Write-Host
 }
 "@
 
