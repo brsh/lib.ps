@@ -1,40 +1,40 @@
 ﻿<#
 .SYNOPSIS
-    Pull code from snippet library
- 
+Pull code from snippet library
+
 .DESCRIPTION
-    The PowerShel ISE has code Snippets that ease script creation (hit Cntrl-J to see the list). And, since Snippets are an ISE feature, the ISE PS console has a few Snippet related commands (Get-ISESnippet, Import-ISESnippet, New-ISESnippet)... which aren't available outside of the ISE. Yeah, that makes sense, but sometimes you want to see sample code when you're just sitting at a normal PS console. 
+The PowerShell ISE has code Snippets that ease script creation (hit Cntrl-J to see the list). And, since Snippets are an ISE feature, the ISE PS console has a few Snippet related commands (Get-ISESnippet, Import-ISESnippet, New-ISESnippet)... which aren't available outside of the ISE. Yeah, that makes sense, but sometimes you want to see sample code when you're just sitting at a normal PS console.
 
-    This script searches the default "user" Snippet location ($env:UserProfile\Documents\WindowsPowerShell\Snippets) and my Lib.PS Snippet location and outputs any Snippets that match the search terms (or all of them if no search is specified).
+This script searches the default "user" Snippet location ($env:UserProfile\Documents\WindowsPowerShell\Snippets) and my Lib.PS Snippet location and outputs any Snippets that match the search terms (or all of them if no search is specified).
 
-    Of course, to use the Lib.PS Snippets, you have to enter 'Import-IseSnippet [PathToLib.PS]\Snippets' either each time you start ISE via the ISE Console or once via the ISE's profile (try $env:UserProfile\Documents\WindowsPowerShell\Microsoft.PowerShellISE_profile.ps1).
+Of course, to use the Lib.PS Snippets, you have to enter 'Import-IseSnippet [PathToLib.PS]\Snippets' either each time you start ISE via the ISE Console or once via the ISE's profile (try $env:UserProfile\Documents\WindowsPowerShell\Microsoft.PowerShellISE_profile.ps1).
 
 .PARAMETER Name
-    Search/Filter by Snippet Name
+Search/Filter by Snippet Name
 
 .PARAMETER Title
-    Search/Filter by Snippet Title
+Search/Filter by Snippet Title
 
 .PARAMETER Description
-    Search/Filter by Snippet Description
+Search/Filter by Snippet Description
 
 .PARAMETER Code
-    Search/Filter by Snippet Code
+Search/Filter by Snippet Code
 
 .EXAMPLE
-     Get-Snippet.ps1
+Get-Snippet.ps1
 
-     Lists all Snippets
-
-.EXAMPLE
-     Get-Snippet.ps1 -Name Admin
-
-     Lists Snippets with 'Admin' in the filename
+Lists all Snippets
 
 .EXAMPLE
-     Get-Snippet.ps1 -Code Start-Sleep
+Get-Snippet.ps1 -Name Admin
 
-     Lists Snippets with 'Start-Sleep' in the code
+Lists Snippets with 'Admin' in the filename
+
+.EXAMPLE
+Get-Snippet.ps1 -Code Start-Sleep
+
+Lists Snippets with 'Start-Sleep' in the code
 #>
 
 
@@ -50,7 +50,7 @@ param (
     [String] $Code
 )
 
-BEGIN { 
+BEGIN {
     function AddPathToSearch {
         param (
             [string] $Path = $pwd

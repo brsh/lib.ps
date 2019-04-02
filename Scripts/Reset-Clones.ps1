@@ -11,7 +11,7 @@ param (
 
 if (-not $Folder) {
 	""
-	"Folder paramater not specified and the LibPath variable doesn't seem to be initialized."
+	"Folder parameter not specified and the LibPath variable doesn't seem to be initialized."
 	"Is Lib.PS cloned/installed? Maybe you forgot the -Folder parameter??"
 	""
 	return
@@ -19,11 +19,11 @@ if (-not $Folder) {
 
 if ($pscmdlet.ShouldProcess("LibPS", "Cloning Repository")) {
 	if ( ([System.Environment]::OSVersion.Version.Major -gt 5) -and ( # Vista and ...
-			new-object Security.Principal.WindowsPrincipal (
+			New-Object Security.Principal.WindowsPrincipal (
 				[Security.Principal.WindowsIdentity]::GetCurrent()) # current user is admin
 		).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) ) {
 
-		if (-not (test-path $Folder\Clones)) {
+		if (-not (Test-Path $Folder\Clones)) {
 
 			"Creating the Clones folder..."
 			try {
@@ -35,7 +35,7 @@ if ($pscmdlet.ShouldProcess("LibPS", "Cloning Repository")) {
 			}
 		}
 
-		if (-not (test-path $Folder\Modules)) {
+		if (-not (Test-Path $Folder\Modules)) {
 			"Creating the Modules folder..."
 			try {
 				mkdir "$Folder\Modules" -ea stop | ForEach-Object { "   $_  -- Success" }
@@ -47,13 +47,13 @@ if ($pscmdlet.ShouldProcess("LibPS", "Cloning Repository")) {
 		}
 
 		"Cloning the default scripts ($Folder\Settings\Get-Git-Clones.ini):"
-		get-content $Folder\Settings\Get-Git-Clones.ini | ForEach-Object {
+		Get-Content $Folder\Settings\Get-Git-Clones.ini | ForEach-Object {
 			& $LibPath\Scripts\Get-GitModule.ps1 -URLPath $_ -Destination $Folder\Clones -ReadOnly -Force -Verbose
 		}
 
 
 		"Cloning the default Modules ($Folder\Settings\Get-Git-Modules.ini):"
-		get-content $Folder\Settings\Get-Git-Modules.ini | ForEach-Object {
+		Get-Content $Folder\Settings\Get-Git-Modules.ini | ForEach-Object {
 			& $LibPath\Scripts\Get-GitModule.ps1 -URLPath $_ -Destination $Folder\Modules -ReadOnly -Force -Verbose
 		}
 

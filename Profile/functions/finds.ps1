@@ -7,7 +7,7 @@
 	Process {
 		$Files = @()
 		ForEach ($Location in $Locations) {
-			if (test-path $Location) {
+			if (Test-Path $Location) {
 				$Files += Get-ChildItem -Path $Location -Filter $SearchFor -Recurse -ErrorAction SilentlyContinue
 			}
 		}
@@ -21,7 +21,7 @@ New-Alias -name find -Value Find-Files -Description "Search multiple folders for
 function Find-InTextFile {
 	<#
 .SYNOPSIS
-  Search files for specified keywords
+	Search files for specified keywords
 
 .DESCRIPTION
     The Find-InTextFile function performs a keyword search on text files. By default,
@@ -89,7 +89,7 @@ function Find-InTextFile {
 		[String[]] $Exclude,
 		[Alias('Text', 'SearchTerm')]
 		[String] $KeyWord = (Read-Host "Please enter the text for which to search: "),
-		[Alias('Subfolders')]
+		[Alias('SubFolders')]
 		[Switch] $Recurse = $false,
 		[Switch] $CaseSensitive = $false,
 		[Alias('IsRegEx', 'RegularExpression')]
@@ -98,25 +98,25 @@ function Find-InTextFile {
 		[Switch] $Shorten = $false
 	)
 	#Eesh - Get-ChildItem prefers * in the path if you actually want to find items w/out rescurse....
-	$Path = (resolve-path $Path).ProviderPath
+	$Path = (Resolve-Path $Path).ProviderPath
 	$WorkingPath = "$($Path)\*"
 
 	if (-not $NoTotals) { "`nSearch Root: $Path" }
 
-	$gciParams = @{}
+	$gciParams = @{ }
 	$gciParams.Path = $WorkingPath
 	$gciParams.Filter = $Include
 	$gciParams.Recurse = $Recurse
 	$gciParams.ErrorAction = 'SilentlyContinue'
 	if ($exclude) { $gciParams.Exclude = $Exclude }
 
-	$ssParams = @{}
+	$ssParams = @{ }
 	$ssParams.Pattern = $KeyWord
 	$ssParams.CaseSensitive = $CaseSensitive
 	$ssParams.SimpleMatch = -not $RegEx
 
 	Get-ChildItem @gciParams | Sort-Object Directory, CreationTime -Unique |
-		Select-String @ssParams -OutVariable RetVal | Out-Null
+	Select-String @ssParams -OutVariable RetVal | Out-Null
 
 	$RetVal | ForEach-Object {
 		[string] $pathFormat = ""
@@ -146,10 +146,10 @@ function Find-InTextFile {
 		$InfoStack
 	}
 
-	if (-not $NoTotals) {  "`nFound $($RetVal.Count) results in $(($RetVal | Sort-Object Path -unique).Count) files" }
+	if (-not $NoTotals) { "`nFound $($RetVal.Count) results in $(($RetVal | Sort-Object Path -unique).Count) files" }
 }
 
-New-Alias -name findin -value Find-InTextFile -Description "Search files for specified keywords" -Force
+New-Alias -name FindIn -value Find-InTextFile -Description "Search files for specified keywords" -Force
 
-function Find-Commands { get-command $args"*" }
+function Find-Commands { Get-Command $args"*" }
 New-Alias -name which -value Find-Commands -Description "Lists/finds commands with specified text" -Force

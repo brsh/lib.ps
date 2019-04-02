@@ -198,7 +198,7 @@ function Get-CurrentCalendar {
     write-host "" (get-date -u "%a - %b %d, %Y")
     WriteHead
     for ($i = 0; $i -lt $arr.Length; $i+=1) {
-        $subcount += 1
+        $SubCount += 1
         if ((($LastMonth -gt 0) -and ($i -lt $LastMonth)) -or ($i -ge $NextNextMonthStart)) {
             #Set Color for the oldest and "futurist" months in the list
             $Color = $ColorForeFurthest

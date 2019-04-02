@@ -9,20 +9,20 @@ function Get-LoadedModuleFunctions {
 		[string] $Module = "ALL"
 	)
 
-	#An array to skip certain default functions (I load prompt; MS loads readline)
+	#An array to skip certain default functions (I load prompt; MS loads ReadLine)
 	#BUT, we only want to ignore these if we're looking at the "All" (or general) listing
-	#$ToIgnore = "prompt", "PSConsoleHostReadline"
+	#$ToIgnore = "prompt", "PSConsoleHostReadLine"
 	$ToIgnore = $Global:SnewToIgnore
 	$ProcessIgnore = $true
 
 	#Pull all the script modules currently loaded
-	$list = get-Module | Where-Object { $_.ModuleType -match "Script" }
+	$list = Get-Module | Where-Object { $_.ModuleType -match "Script" }
 
 	#If we're looking for the list, just give it and exit
-	#This is redundant functionality to get-module, really, but handy to have in the functioin
-	if ($GetList) { $list | ft -AutoSize Name, ModuleType, Version; break }
+	#This is redundant functionality to get-module, really, but handy to have in the function
+	if ($GetList) { $list | Format-Table -AutoSize Name, ModuleType, Version; break }
 
-	#Check if we're looking for somthing specific or all modules
+	#Check if we're looking for something specific or all modules
 	#if specific, we want to limit the $list to that object and process ALL functions, even the generally ignored items
 	if ($Module -notmatch "ALL") { $list = $list | Where-Object { $_.Name -eq "$Module" }; $ProcessIgnore = $false }
 
@@ -39,17 +39,17 @@ function Get-LoadedModuleFunctions {
 			#and set Skip as appropriate
 			if ($ProcessIgnore) {
 				#if ($ToIgnore -contains $_.Name) { $Skip = $True}
-				if ($ToIgnore.Contains($_.Name)) { $Skip = $True}
-				if ($ToIgnore.Contains($_.Source)) { $Skip = $True}
+				if ($ToIgnore.Contains($_.Name)) { $Skip = $True }
+				if ($ToIgnore.Contains($_.Source)) { $Skip = $True }
 			}
 
 			#Now, based on whether we skip or not
 			If (-not $Skip) {
 				#Create the infohash for the object with the info we want
 				$InfoHash = @{
-					Alias       = $(get-alias -definition $_.Name -ea SilentlyContinue)
+					Alias       = $(Get-Alias -definition $_.Name -ea SilentlyContinue)
 					Command     = $_.Name
-					Description = $(Get-help $_.Name -ShowWindow:$false).Synopsis
+					Description = $(Get-Help $_.Name -ShowWindow:$false).Synopsis
 					Module      = $_.Source
 					HelpURI     = $_.HelpUri
 					Version     = $_.Version
@@ -85,13 +85,13 @@ Function Get-NewCommands {
 	$CommandWidth = 25
 	$AliasWidth = 12
 
-	$retval = Get-Alias | where-object { $_.Description }
+	$retval = Get-Alias | Where-Object { $_.Description }
 
 	$retval | Sort-Object ResolvedCommandName -unique | `
-		format-table @{Expression = {$_.ResolvedCommandName}; Label = "Command"; width = $CommandWidth}, @{Expression = {$_.Name}; Label = "Alias"; width = $AliasWidth}, @{Expression = {$_.Description}; Label = "Description"}
+		Format-Table @{Expression = { $_.ResolvedCommandName }; Label = "Command"; width = $CommandWidth }, @{Expression = { $_.Name }; Label = "Alias"; width = $AliasWidth }, @{Expression = { $_.Description }; Label = "Description" }
 	if ($ModulesToo) {
-		Get-LoadedModuleFunctions -Module all | sort command |
-			format-table @{Expression = {$_.Command}; Label = "Command"; width = $CommandWidth}, @{Expression = {$_.Alias}; Label = "Alias"; width = $AliasWidth}, @{Expression = {$_.Module}; Label = "Module"; width = 15}, Description
+		Get-LoadedModuleFunctions -Module all | Sort-Object command |
+		Format-Table @{Expression = { $_.Command }; Label = "Command"; width = $CommandWidth }, @{Expression = { $_.Alias }; Label = "Alias"; width = $AliasWidth }, @{Expression = { $_.Module }; Label = "Module"; width = 15 }, Description
 	}
 }
 

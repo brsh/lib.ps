@@ -1,28 +1,28 @@
 My Powershell Library
 
-This sets up my PowerShell environment - including my profile and my "standard" scripts, modules, psdrives, and settings. Of course, to load everything, I still need to manually doctor a main PowerShell Profile file. I use the AllUsersCurrentHost, cuz I'm every user (hmm... reminds me of a song).
+This sets up my PowerShell environment - including my profile and my "standard" scripts, modules, PSDrives, and settings. Of course, to load everything, I still need to manually doctor a main PowerShell Profile file. I use the AllUsersCurrentHost, cuz I'm every user (hmm... reminds me of a song).
 
 Some of my standard functions ('snew' shows the current list; or 'snew -ModulesToo' to include loaded modules):
 
-Command                   | Alias       | Description
--------                   | -----       | -----------
-Add-ToPath                | PathAdd     | Adds a directory to the path
-Find-Commands             | which       | Lists/finds commands with specified text
-Find-Files                | find        | Search multiple folders for files
-Find-InTextFile           | grep        | Grep with GSAR abilities
-Get-Calendar              | cal         | Show current month calendar
-Get-CurrentCalendar       | curcal      | Show previous, current, and next months
-Get-LoadedModuleFunctions | glmf        | List functions from loaded modules
-Get-NewCommands           | snew        | Show this list
-Get-ProfilePSDrive        | PfDrive     | Drives created by PS Profile
-Get-SplitEnvPath          | ePath       | Display the path environment var
-GoHome                    | cd~         | Return to home directory
-New-File                  | touch       | Create an empty file
-New-TimestampedFile       | ntf         | Create a new file w/timestamped filename
-Read-Profiles             | re-Profs    | Reload profile files (must . source)
-Remove-FromPath           | PathDel     | Removes a directory from the path
-Set-CountDown             | tminus      | Pause with a countdown timer
-Test-Port                 | pp          | Test a TCP connection on the specified port
+| Command                   | Alias    | Description                                 |
+| ------------------------- | -------- | ------------------------------------------- |
+| Add-ToPath                | PathAdd  | Adds a directory to the path                |
+| Find-Commands             | which    | Lists/finds commands with specified text    |
+| Find-Files                | find     | Search multiple folders for files           |
+| Find-InTextFile           | grep     | Grep with GSAR abilities                    |
+| Get-Calendar              | cal      | Show current month calendar                 |
+| Get-CurrentCalendar       | curcal   | Show previous, current, and next months     |
+| Get-LoadedModuleFunctions | glmf     | List functions from loaded modules          |
+| Get-NewCommands           | snew     | Show this list                              |
+| Get-ProfilePSDrive        | PfDrive  | Drives created by PS Profile                |
+| Get-SplitEnvPath          | ePath    | Display the path environment var            |
+| GoHome                    | cd~      | Return to home directory                    |
+| New-File                  | touch    | Create an empty file                        |
+| New-TimestampedFile       | ntf      | Create a new file w/timestamped filename    |
+| Read-Profiles             | re-Profs | Reload profile files (must . source)        |
+| Remove-FromPath           | PathDel  | Removes a directory from the path           |
+| Set-CountDown             | tminus   | Pause with a countdown timer                |
+| Test-Port                 | pp       | Test a TCP connection on the specified port |
 
 ##### Script Folder / Security
 My default folder location for scripting is, aptly, C:\Scripts. I keep this library, therefore, in C:\Scripts\lib.ps (and that's what my install script defaults to). It is psdrive'd to Scripts:\  ... note... any drive you set as the home will be psdrive'd to Scripts:\
@@ -36,13 +36,13 @@ I'm moving more and more of these items to ini files to minimize edits to the sc
 
 That said, you might want to adjust these ini files as necessary for your environment (assuming there actually is a 'you' out there reading and using this). You should also be able to add additional modules just by adding their urls to the ini file.
 
-Name                   | Description
-----                   | ----
-Add-ToPath.ini         | Folders to add to the path for the PowerShell session
-Remove-FromPath.ini    | Folders to remove from the path for thie PowerShell session
-Get-Git-Clones.ini     | URLs for script repos that I find handy to have (will be added to the path)
-Get-Git-Modules.ini    | URLS for Module repos that I find handy to have (will be imported into session)
-PSDrive.csv            | I like PSDrives. They're handy. Look 'em up.
+| Name                | Description                                                                     |
+| ------------------- | ------------------------------------------------------------------------------- |
+| Add-ToPath.ini      | Folders to add to the path for the PowerShell session                           |
+| Remove-FromPath.ini | Folders to remove from the path for thie PowerShell session                     |
+| Get-Git-Clones.ini  | URLs for script repos that I find handy to have (will be added to the path)     |
+| Get-Git-Modules.ini | URLS for Module repos that I find handy to have (will be imported into session) |
+| PSDrive.csv         | I like PSDrives. They're handy. Look 'em up.                                    |
 
 #### To Install:
 
@@ -50,12 +50,12 @@ Download and extract the zip from: https://github.com/brsh/lib.ps/archive/master
 
 Then, pick your preferred Profile file from:
 
-Name                   | Path
-----                   | ----
-AllUsersAllHosts       | C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
-AllUsersCurrentHost    | C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1
-CurrentUserAllHosts    | C:\Users\bshea\Documents\WindowsPowerShell\profile.ps1
-CurrentUserCurrentHost | C:\Users\bshea\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+| Name                   | Path                                                                        |
+| ---------------------- | --------------------------------------------------------------------------- |
+| AllUsersAllHosts       | C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1                      |
+| AllUsersCurrentHost    | C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1 |
+| CurrentUserAllHosts    | C:\Users\bshea\Documents\WindowsPowerShell\profile.ps1                      |
+| CurrentUserCurrentHost | C:\Users\bshea\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1 |
 
 and add the following:
 ```

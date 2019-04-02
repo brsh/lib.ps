@@ -79,7 +79,7 @@ function Write-DebugMessage {
 $Global:IsAdmin = $False
 if ($IsDebug) { Write-DebugMessage 'IsAdmin: Testing' }
 if ( ([System.Environment]::OSVersion.Version.Major -gt 5) -and ( # Vista and ...
-		new-object Security.Principal.WindowsPrincipal (
+		New-Object Security.Principal.WindowsPrincipal (
 			[Security.Principal.WindowsIdentity]::GetCurrent()) # current user is admin
 	).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) ) {
 	$Global:IsAdmin = $True
@@ -127,7 +127,7 @@ function Read-Profiles {
 	#Reload all profiles - helpful when editing/testing profiles
 	Set-Variable -name isDotSourced -value $False -Scope 0
 	$isDotSourced = $MyInvocation.InvocationName -eq '.' -or $MyInvocation.Line -eq ''
-	if (!($isDotSourced)) { write-host "You must dot source this function" -fore Red; write-host "`t. Load-Profiles`n`t. re-Profs" -ForegroundColor "Yellow"; return "" }
+	if (!($isDotSourced)) { Write-Host "You must dot source this function" -fore Red; Write-Host "`t. Load-Profiles`n`t. re-Profs" -ForegroundColor "Yellow"; return "" }
 	@(
 		$Profile.AllUsersAllHosts,
 		$Profile.AllUsersCurrentHost,
@@ -144,7 +144,7 @@ function Read-Profiles {
 New-Alias -name re-Profs -value Read-Profiles -Description "Reload profile files (must . source)" -Force
 
 #Defaults
-AddPSDefault "Format-Table:AutoSize" {if ($host.Name -eq 'ConsoleHost') {$true}}
+AddPSDefault "Format-Table:AutoSize" { if ($host.Name -eq 'ConsoleHost') { $true } }
 AddPSDefault "Get-Help:ShowWindow" $true
 AddPSDefault "Out-Default:OutVariable" "__"
 
@@ -153,7 +153,7 @@ AddPSDefault "Out-Default:OutVariable" "__"
 
 #Modules
 if ($PSVersionTable.PSVersion.Major -gt 2) {
-	if (test-path $Global:LibPath\Modules) {
+	if (Test-Path $Global:LibPath\Modules) {
 		$env:PSModulePath = $env:PSModulePath + ";$LibPath\Modules"
 		Get-ChildItem $Global:LibPath\Modules *.psd1 -Recurse | ForEach-Object {
 			if ($IsDebug) { Write-DebugMessage "Modules: Importing $($_.Name)" }
@@ -163,9 +163,9 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
 }
 
 #PSDrives
-if (test-path $Global:LibPath\Settings\psdrive.csv) {
+if (Test-Path $Global:LibPath\Settings\psdrive.csv) {
 	if ($IsDebug) { Write-DebugMessage "PSDrives: Creating from CSV" }
-	import-csv $Global:LibPath\Settings\psdrive.csv | New-ProfilePSDrive
+	Import-Csv $Global:LibPath\Settings\psdrive.csv | New-ProfilePSDrive
 }
 
 if (Get-Service VMTools -ea Ignore) {
@@ -180,16 +180,16 @@ add-topath $libpath\scripts
 if (Test-Path $Global:LibPath\Settings\Add-ToPath.ini) {
 	# get-content $Global:LibPath\Settings\Add-ToPath.ini | Add-ToPath
 	Get-Content $Global:LibPath\Settings\Add-ToPath.ini | ForEach-Object {
-		$p = @{}
+		$p = @{ }
 		$p.Directories = $_.split(",")[0]
 		$p.Recurse = [bool] $_.split(",")[1]
 		if ($IsDebug) { Write-DebugMessage "Paths: Adding from file $($p.Directories)" }
 		New-Object -TypeName psobject -Property $p
 	} | Add-ToPath
 }
-if (Test-Path $Global:LibPath\Settings\remove-frompath.ini) {
+if (Test-Path $Global:LibPath\Settings\Remove-FromPath.ini) {
 	if ($IsDebug) { Write-DebugMessage "Paths: Removing" }
-	get-content $Global:LibPath\Settings\remove-frompath.ini | Remove-FromPath
+	Get-Content $Global:LibPath\Settings\Remove-FromPath.ini | Remove-FromPath
 }
 
 ## Removes non-existent dirs from path
@@ -199,8 +199,8 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 	## Allow higher protocols with invoke-webreq and -restmeth
 	if ($IsDebug) { Write-DebugMessage "SSL/TLS: Setting available protocols" }
 	[System.Enum]::GetValues('Net.SecurityProtocolType') |
-		Where-Object { $_ -gt [System.Math]::Max( [Net.ServicePointManager]::SecurityProtocol.value__, [Net.SecurityProtocolType]::Tls.value__ ) } |
-		ForEach-Object {
+	Where-Object { $_ -gt [System.Math]::Max( [Net.ServicePointManager]::SecurityProtocol.value__, [Net.SecurityProtocolType]::Tls.value__ ) } |
+	ForEach-Object {
 		[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor $_
 	}
 } else {
@@ -223,13 +223,13 @@ if (!($isDotSourced)) {
 
 	if (-not $NoExcuses) {
 		if ($IsDebug) { Write-DebugMessage "Get-Excuse: Running" }
-		if (test-path $LibPath\Clones\Get-Excuse\Get-Excuse.ps1) { Write-Host $(& $LibPath\Clones\Get-Excuse\Get-Excuse.ps1 -Format) -ForegroundColor Yellow }
+		if (Test-Path $LibPath\Clones\Get-Excuse\Get-Excuse.ps1) { Write-Host $(& $LibPath\Clones\Get-Excuse\Get-Excuse.ps1 -Format) -ForegroundColor Yellow }
 	}
 	if (-not $NoDayInHistory) {
 		if ($IsDebug) { Write-DebugMessage "Get-ThisDayInHistory: Running" }
-		if (test-path $LibPath\Clones\Get-ThisDayInHistory.ps\Get-ThisDayInHistory.ps1) { & $LibPath\Clones\Get-ThisDayInHistory.ps\Get-ThisDayInHistory.ps1 -FormatIt }
+		if (Test-Path $LibPath\Clones\Get-ThisDayInHistory.ps\Get-ThisDayInHistory.ps1) { & $LibPath\Clones\Get-ThisDayInHistory.ps\Get-ThisDayInHistory.ps1 -FormatIt }
 	}
 } else {
 	#I hate littering the field with random variables
-	remove-item variable:\isDotSourced
+	Remove-Item variable:\isDotSourced
 }

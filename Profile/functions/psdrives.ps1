@@ -8,12 +8,12 @@
 		[String] $Description = ""
 	)
 	Begin {
-		function convertto-herestring {
-			begin {$temp_h_string = '@"' + "`n"}
-			process {$temp_h_string += $_ + "`n"}
+		function ConvertTo-HereString {
+			begin { $temp_h_string = '@"' + "`n" }
+			process { $temp_h_string += $_ + "`n" }
 			end {
 				$temp_h_string += '"@'
-				iex $temp_h_string
+				Invoke-Expression $temp_h_string
 			}
 		}
 	}
@@ -22,8 +22,8 @@
 
 		#Check if the drive already exists (can't create it if it does)
 		#    if ($(Get-PSDrive -name $Name -ea SilentlyContinue ) -ne $null) {
-		if ($(Get-PSDrive -ea SilentlyContinue | Where-Object { $_.Name -eq $Name } ) -ne $null) {
-			#Check if we're currently pwd'd to it or a subfolder (we'll want to leave and return to it)
+		if ($null -ne $(Get-PSDrive -ea SilentlyContinue | Where-Object { $_.Name -eq $Name } )) {
+			#Check if we're currently pwd'd to it or a SubFolder (we'll want to leave and return to it)
 			if ($pwd.Path -match "$($Name):") {
 				#Temporarily move to the un-PSDrive'd location
 				Set-Location $($pwd.path.Replace("$($Name):", (Get-PSDrive $Name).Root))
@@ -32,7 +32,7 @@
 			Remove-PSDrive -Name $Name
 
 		}
-		$Location = $Location | convertto-herestring
+		$Location = $Location | ConvertTo-HereString
 
 		if ($Description.Length -gt 0) { $Description = "PROF: $($Description)" }
 		$null = New-PSDrive -Name $Name -PSProvider FileSystem -Root $Location -Scope Global -ea SilentlyContinue -Description $Description
@@ -45,7 +45,7 @@
 }
 
 function Get-ProfilePSDrive {
-	Get-PSDrive | Where-Object { $_.Description -match "PROF:"} | ft Name, Root, Description
+	Get-PSDrive | Where-Object { $_.Description -match "PROF:" } | Format-Table Name, Root, Description
 }
 
 New-Alias -Name PfDrive -Value Get-ProfilePSDrive -Description "Drives created by PS Profile" -Force

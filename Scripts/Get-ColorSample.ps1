@@ -1,11 +1,11 @@
-﻿<# 
-.SYNOPSIS 
+﻿<#
+.SYNOPSIS
     Console Color Sample Sheet
-         
-.DESCRIPTION 
+
+.DESCRIPTION
     Outputs a table of color samples - showing all background and foreground combinations.
- 
-.EXAMPLE 
+
+.EXAMPLE
     PS C:\> Get-ColorSample
 
     Writes ... the color samples
@@ -41,14 +41,14 @@ function list_it ($yaxis, $xaxis) {
 
     ##Create the heading row
     #blank out the first column
-    write-host " ".PadRight($l, " ") -ForegroundColor $host.ui.rawui.Foregroundcolor -BackgroundColor $host.ui.rawui.backgroundcolor -NoNewline
+    write-host " ".PadRight($l, " ") -ForegroundColor $host.ui.rawui.ForegroundColor -BackgroundColor $host.ui.rawui.BackgroundColor -NoNewline
 
-    #Then cyle through the yaxis colors for their names and column padding
+    #Then cycle through the yaxis colors for their names and column padding
     $yaxis | ForEach-Object {
         #Have to be certain the column is wider than our sample text ("red" is too narrow for "sample", for example)
         $width = $_.ToString().Length
         if ($width -lt $sample.Length) { $width = $sample.Length + 2 }
-        Write-Host (pad $_.ToString() $width)  -ForegroundColor $host.ui.rawui.Foregroundcolor -BackgroundColor $host.ui.rawui.backgroundcolor  -NoNewline
+        Write-Host (pad $_.ToString() $width)  -ForegroundColor $host.ui.rawui.ForegroundColor -BackgroundColor $host.ui.rawui.BackgroundColor  -NoNewline
     }
     #End the header row
     write-host ""
@@ -56,7 +56,7 @@ function list_it ($yaxis, $xaxis) {
     #Create the item rows, 1 for each color
     $xaxis | ForEach-Object {
         #First, right the name of the foreground color "normally"
-        write-host $_.ToString().PadRight($l, " ")  -ForegroundColor $host.ui.rawui.Foregroundcolor -BackgroundColor $host.ui.rawui.backgroundcolor  -NoNewline
+        write-host $_.ToString().PadRight($l, " ")  -ForegroundColor $host.ui.rawui.ForegroundColor -BackgroundColor $host.ui.rawui.BackgroundColor  -NoNewline
 
         #Set the foreground color so we can use it in the next foreach loop
         $fg = $_
@@ -76,14 +76,14 @@ function list_it ($yaxis, $xaxis) {
 
 
 function Get-ColorSample {
-    <# 
-    .SYNOPSIS 
+    <#
+    .SYNOPSIS
         Console Color Sample Sheet
-         
-    .DESCRIPTION 
+
+    .DESCRIPTION
         Outputs a table of color samples - showing all background and foreground combinations.
- 
-    .EXAMPLE 
+
+    .EXAMPLE
         PS C:\> Get-ColorSample
 
         Writes ... the color samples
@@ -94,8 +94,8 @@ function Get-ColorSample {
     #Split them into light and dark so we can have 2 lists
     #    if they ever add "bright" or other colors, could have 3 or more....
     $f = [enum]::GetValues([System.ConsoleColor])
-    $fdark = $f | where-object { $_ -match "Dark*" } 
-    $flite = $f | Where-Object { $_ -notmatch "Dark" } 
+    $fdark = $f | where-object { $_ -match "Dark*" }
+    $flite = $f | Where-Object { $_ -notmatch "Dark" }
 
     #Re-bind the colors in our "separated" order
     #basically a sort because sort-object doesn't quite work right against the enum
@@ -113,4 +113,4 @@ function Get-ColorSample {
 }
 
 write-host
-get-colorsample
+Get-ColorSample
