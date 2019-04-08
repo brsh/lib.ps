@@ -151,5 +151,3 @@ function Find-InTextFile {
 
 New-Alias -name FindIn -value Find-InTextFile -Description "Search files for specified keywords" -Force
 
-function Find-Commands { Get-Command $args"*" }
-New-Alias -name which -value Find-Commands -Description "Lists/finds commands with specified text" -Force

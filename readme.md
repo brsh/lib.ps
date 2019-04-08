@@ -7,18 +7,13 @@ Some of my standard functions ('snew' shows the current list; or 'snew -ModulesT
 | Command                   | Alias    | Description                                 |
 | ------------------------- | -------- | ------------------------------------------- |
 | Add-ToPath                | PathAdd  | Adds a directory to the path                |
-| Find-Commands             | which    | Lists/finds commands with specified text    |
 | Find-Files                | find     | Search multiple folders for files           |
-| Find-InTextFile           | grep     | Grep with GSAR abilities                    |
-| Get-Calendar              | cal      | Show current month calendar                 |
-| Get-CurrentCalendar       | curcal   | Show previous, current, and next months     |
+| Find-InTextFile           | findin   | Basic grep                                  |
 | Get-LoadedModuleFunctions | glmf     | List functions from loaded modules          |
 | Get-NewCommands           | snew     | Show this list                              |
 | Get-ProfilePSDrive        | PfDrive  | Drives created by PS Profile                |
 | Get-SplitEnvPath          | ePath    | Display the path environment var            |
 | GoHome                    | cd~      | Return to home directory                    |
-| New-File                  | touch    | Create an empty file                        |
-| New-TimestampedFile       | ntf      | Create a new file w/timestamped filename    |
 | Read-Profiles             | re-Profs | Reload profile files (must . source)        |
 | Remove-FromPath           | PathDel  | Removes a directory from the path           |
 | Set-CountDown             | tminus   | Pause with a countdown timer                |
