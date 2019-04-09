@@ -1,20 +1,20 @@
 ﻿<?xml version='1.0' encoding='utf-8' ?>
-    <Snippets  xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
-        <Snippet Version='1.0.0'>
-            <Header>
-                <Title>NewPSObject</Title>
-                <Description>Create a new PSObject with default set of properties</Description>
-                <Author></Author>
-                <SnippetTypes>
-                    <SnippetType>Expansion</SnippetType>
-                </SnippetTypes>
-            </Header>
+<Snippets xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
+    <Snippet Version='1.0.0'>
+        <Header>
+            <Title>NewPSObject</Title>
+            <Description>Create a new PSObject with default set of properties</Description>
+            <Author></Author>
+            <SnippetTypes>
+                <SnippetType>Expansion</SnippetType>
+            </SnippetTypes>
+        </Header>
 
-            <Code>
-                <Script Language='PowerShell' CaretOffset='0'>
-                    <![CDATA[$InfoHash =  @{
-    Detail1 = $_.Detail1
-    Detail2 = $_.Detail2
+        <Code>
+            <Script Language='PowerShell' CaretOffset='0'>
+                <![CDATA[$InfoHash =  @{
+    Detail1 = 'Detail1'
+    Detail2 = 'Detail2'
 }
 $InfoStack = New-Object -TypeName PSObject -Property $InfoHash
 
@@ -23,13 +23,13 @@ $InfoStack.PSTypeNames.Insert(0,"NewObject.Info")
 
 #Sets the "default properties" when outputting the variable... but really for setting the order
 $defaultProperties = @('Detail1', 'Detail2')
-$defaultDisplayPropertySet = New-Object System.Management.Automation.PSPropertySet(‘DefaultDisplayPropertySet’,[string[]]$defaultProperties)
+$defaultDisplayPropertySet = New-Object System.Management.Automation.PSPropertySet('DefaultDisplayPropertySet',[string[]]$defaultProperties)
 $PSStandardMembers = [System.Management.Automation.PSMemberInfo[]]@($defaultDisplayPropertySet)
 $InfoStack | Add-Member MemberSet PSStandardMembers $PSStandardMembers
 
 $InfoStack]]>
-                </Script>
-            </Code>
+            </Script>
+        </Code>
 
     </Snippet>
 </Snippets>
