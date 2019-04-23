@@ -36,6 +36,7 @@
 
 .LINK
     https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
+	https://dotnet.microsoft.com/download
 	https://github.com/brsh/lib.ps
 
 .EXAMPLE
@@ -103,7 +104,7 @@ if (test-path 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4') {
 		if ($_.Version) {
 			try {
 				$Code = (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\$($_.PSChildName)\").Release
-			} catch { $Code = "n/a"}
+			} catch { $Code = "n/a" }
 			Out-VersionObject -name "v4.0 $($_.PSChildName)" -Version $_.Version -SP "n/a" -Code $Code
 		}
 	}
@@ -129,7 +130,9 @@ if (test-path 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\1033\') 
 		461310 { $Name = "v4.7.1"; $Version = "4.7.1" }
 		461808 { $Name = "v4.7.2 on Windows 10 U18.04"; $Version = "4.7.2" }
 		461814 { $Name = "v4.7.2"; $Version = "4.7.2" }
-		{$_ -gt 461814} { $Name = "See $($website)"; $Version = "Greater than 4.7.2" }
+		528040 { $Name = "v4.8 on Windows 10 U19.05"; $Version = "4.8" }
+		528049 { $Name = "v4.8"; $Version = "4.8" }
+		{ $_ -gt 528049 } { $Name = "See $($website)"; $Version = "Greater than 4.8" }
 		Default { $Name = "Uncertain"; $Version = $_ }
 	}
 	Out-VersionObject -name $Name -Version $Version -SP "n/a" -Code $Code
