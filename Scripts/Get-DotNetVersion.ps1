@@ -32,7 +32,7 @@
         4.0 is deprecated, obfuscated, emulated, and actually the installed version of 4.5, 4.6, 4.7, etc.
 		.Net Core has SO MANY .. um .. a lot of components with versions ... and it's getting to be worse than non-Core!
 
-	The .Net Core processing does not work on Powershell on PowerShell v2, but c'mon - you're not really running this on v2, are you?
+	The .Net Core processing does not work  on PowerShell v2, but c'mon - you're not really running this on v2, are you?
 
 .LINK
     https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
