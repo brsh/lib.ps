@@ -1,0 +1,22 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+    <Snippets  xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
+        <Snippet Version='1.0.0'>
+            <Header>
+                <Title>New Generic List</Title>
+                <Description>Creates a new Generic list</Description>
+                <Author></Author>
+                <SnippetTypes>
+                    <SnippetType>Expansion</SnippetType>
+                </SnippetTypes>
+            </Header>
+
+            <Code>
+                <Script Language='PowerShell' CaretOffset='0'>
+                    <![CDATA[$List = New-Object -TypeName 'System.Collections.Generic.List[object]'
+$List.add('foo')]]>
+                </Script>
+            </Code>
+
+    </Snippet>
+</Snippets>
+
