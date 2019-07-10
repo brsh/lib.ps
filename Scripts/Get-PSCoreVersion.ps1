@@ -52,6 +52,7 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 		if (($JSON.tag_name -replace '\D', '') -notmatch ($PSVersionTable.GitCommitId -replace '\D', '')) {
 			Write-Host "New version of PowerShell available! Specifically, $($JSON.tag_name)"  -ForegroundColor Yellow
 			Write-Host $PSCoreURI -ForegroundColor Green
+			Write-Host 'One Line Install: iex "& { $(irm https://aka.ms/install-powershell.ps1) } -UseMSI"' -ForegroundColor Green
 			if ($ReleaseInfo) {
 				Write-Host $JSON.body
 			}
