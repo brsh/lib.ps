@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+    <Snippets  xmlns='http://schemas.microsoft.com/PowerShell/Snippets'>
+        <Snippet Version='1.0.0'>
+            <Header>
+                <Title>Find IP from EventLog Message</Title>
+                <Description>Pulls out the IP address from eventlog messages</Description>
+                <Author>Brian Sheaffer</Author>
+                <SnippetTypes>
+                    <SnippetType>Expansion</SnippetType>
+                </SnippetTypes>
+            </Header>
+
+            <Code>
+                <Script Language='PowerShell' CaretOffset='0'>
+                    <![CDATA[Get-EventLog -LogName Application -After $((Get-Date).AddHours(-2)) -Message '*CHAR(*' | select -ExpandProperty Message | foreach-object { ($_ | Select-String -Pattern '\d{1,3}(\.\d{1,3}){3}' -AllMatches).Matches.Value } | Group-Object]]>
+                </Script>
+            </Code>
+
+    </Snippet>
+</Snippets>
+
