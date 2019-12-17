@@ -29,16 +29,12 @@ param (
 	[switch] $NoObject = $false
 )
 
-function Get-CurVer {
-	$PSVersionTable.PSVersion
-}
-
 $PSCoreURI = 'https://github.com/powershell/powershell'
 
 if ($PSVersionTable.PSVersion.Major -lt 6) {
 	if (-not $Quiet) {
-		Write-Host "This is Windows Powershell... PSCore will always be newer than this." -ForegroundColor Green
-		Write-Host $PSCoreURI -ForegroundColor Green
+		Write-Host "This is Windows Powershell $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor) - PSCore will always be newer than this." -ForegroundColor White
+		Write-Host "  PSCore is available at $PSCoreURI" -ForegroundColor Green
 	}
 } else {
 	#Using this to get rid of the nasty output Invoke-WebRequest gives you in PowerShell on the Mac
@@ -47,17 +43,22 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 		$ProgressPreference = "SilentlyContinue"
 	}
 
+	Write-Host "Current Version of PowerShell Core is $($PSVersionTable.PSVersion.ToString())"  -ForegroundColor White
+	if (($PSVersionTable.PSVersion -match 'rc') -or ($PSVersionTable.PSVersion -match 'preview')) {
+		Write-Host "  This is not a release version"  -ForegroundColor Yellow
+	}
 	$JSON = Invoke-WebRequest 'https://api.github.com/repos/powershell/powershell/releases/latest' | ConvertFrom-Json
 	if ($PSVersionTable.GitCommitId) {
 		if (($JSON.tag_name -replace '\D', '') -notmatch ($PSVersionTable.GitCommitId -replace '\D', '')) {
-			Write-Host "New version of PowerShell available! Specifically, $($JSON.tag_name)"  -ForegroundColor Yellow
-			Write-Host $PSCoreURI -ForegroundColor Green
-			Write-Host 'One Line Install: iex "& { $(irm https://aka.ms/install-powershell.ps1) } -UseMSI"' -ForegroundColor Green
+			Write-Host "Latest official PowerShell release version is $($JSON.tag_name)"  -ForegroundColor White
+			Write-Host "  $PSCoreURI" -ForegroundColor Green
+			Write-Host 'One Line Install: iex "& { $(irm https://aka.ms/install-powershell.ps1) } -UseMSI"' -ForegroundColor White
 			if ($ReleaseInfo) {
+				Write-Host ''
 				Write-Host $JSON.body
 			}
 		} else {
-			if (-not $Quiet) {Write-Host 'PowerShell Core is currently up to date.' -ForegroundColor Green }
+			if (-not $Quiet) { Write-Host '  PowerShell Core is currently up to date.' -ForegroundColor Green }
 		}
 	}
 	if ($Quiet) {
