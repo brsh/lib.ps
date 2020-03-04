@@ -1,13 +1,17 @@
 <#
 .SYNOPSIS
-Pulls the version of PS Core available on the web and compares it to the running version
+Pulls the version of PS 'Core' available on the web and compares it to the running version
 
 .DESCRIPTION
-Just a quick function to poll the MS Github site for the current version of PowerShell Core.
+Just a quick function to poll the MS Github site for the current version of PowerShell 'Core'.
 Then it compares that version against what's running and let's you know if this is an
 older version. Handy, no?
 
-BTW ... PowerShell Core will _always_ be newer than Windows PowerShell, so bear that in mind.
+BTW ... PowerShell 'Core' will _always_ be newer than Windows PowerShell, so bear that in mind.
+
+Also, with PowerShell 7, Microsoft has dropped the 'Core' postfix. I, however, am leaving it
+in this script to maintain the "separation" between Windows PowerShell and "Core". Just a
+little differentiation between friends.
 
 .PARAMETER Quiet
 Don't show the Progress Bar as it queries the website
@@ -17,7 +21,6 @@ Show the release info / change log provided from the url
 
 .PARAMETER NoObject
 Don't output the version object
-
 
 .LINK
 http://www.virtu-al.net/2017/03/27/powershell-core-date/
@@ -33,8 +36,8 @@ $PSCoreURI = 'https://github.com/powershell/powershell'
 
 if ($PSVersionTable.PSVersion.Major -lt 6) {
 	if (-not $Quiet) {
-		Write-Host "This is Windows Powershell $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor) - PSCore will always be newer than this." -ForegroundColor White
-		Write-Host "  PSCore is available at $PSCoreURI" -ForegroundColor Green
+		Write-Host "This is Windows Powershell $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor) - PS 'Core' will always be newer than this." -ForegroundColor White
+		Write-Host "  PS 'Core' is available at $PSCoreURI" -ForegroundColor Green
 	}
 } else {
 	#Using this to get rid of the nasty output Invoke-WebRequest gives you in PowerShell on the Mac
@@ -43,7 +46,7 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 		$ProgressPreference = "SilentlyContinue"
 	}
 
-	Write-Host "Current Version of PowerShell Core is $($PSVersionTable.PSVersion.ToString())"  -ForegroundColor White
+	Write-Host "Current Version of PowerShell 'Core' is $($PSVersionTable.PSVersion.ToString())"  -ForegroundColor White
 	if (($PSVersionTable.PSVersion -match 'rc') -or ($PSVersionTable.PSVersion -match 'preview')) {
 		Write-Host "  This is not a release version"  -ForegroundColor Yellow
 	}
@@ -58,7 +61,7 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 				Write-Host $JSON.body
 			}
 		} else {
-			if (-not $Quiet) { Write-Host '  PowerShell Core is currently up to date.' -ForegroundColor Green }
+			if (-not $Quiet) { Write-Host "  PowerShell 'Core' is currently up to date." -ForegroundColor Green }
 		}
 	}
 	if ($Quiet) {
@@ -66,3 +69,8 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 	}
 }
 if (-not $NoObject) { $PSVersionTable.PSVersion } else { write-host '' }
+
+if ($ReleaseInfo) {
+	Write-Host ''
+	Write-Host $JSON.body
+}
