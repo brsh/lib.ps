@@ -65,14 +65,11 @@ param (
 	[Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
 	[string] $UserName = ''
 )
-BEGIN {
-	write-host $Size
-}
+BEGIN { }
 
 PROCESS {
 	[string[]] $ascii = $Characters.ToCharArray() | Sort-Object -unique
 	[string] $TempPassword = ''
-	write-host $Size -ForegroundColor cyan
 
 	For ($loop = 1; $loop -le $Size; $loop++) {
 		$TempPassword += ($ascii | GET-RANDOM)
