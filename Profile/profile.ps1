@@ -59,6 +59,15 @@ param (
 )
 ###################### Declarations #####################
 
+
+[string] $Activity = 'Startup'
+[string] $SubActivity = ''
+[int] $counter = 0
+[int] $TotalPercent = 0
+
+
+Write-Progress -Id 0 -Activity 'Initializing Profile...' -PercentComplete $TotalPercent -Status $Activity
+
 function Write-DebugMessage {
 	param (
 		[string[]] $Message
@@ -76,8 +85,12 @@ function Write-DebugMessage {
 	}
 }
 
+$Activity = 'IsAdmin: Testing'
+$TotalPercent += 10
+Write-Progress -Id 0 -Activity 'Initializing Profile...' -PercentComplete $TotalPercent -Status $Activity
+if ($IsDebug) { Write-DebugMessage $Activity }
+
 $Global:IsAdmin = $False
-if ($IsDebug) { Write-DebugMessage 'IsAdmin: Testing' }
 if ( ([System.Environment]::OSVersion.Version.Major -gt 5) -and ( # Vista and ...
 		New-Object Security.Principal.WindowsPrincipal (
 			[Security.Principal.WindowsIdentity]::GetCurrent()) # current user is admin
@@ -96,23 +109,53 @@ $Global:LibPath = $PSScriptRoot.Replace("\Profile", "")
 
 ################### Inits ######################
 
+$Activity = 'Init Functions...'
+$TotalPercent += 10
+Write-Progress -Id 0 -Activity 'Initializing Profile...' -PercentComplete $TotalPercent -Status $Activity
+
 # Dot sourcing private function and script files
 if (Test-Path $Global:LibPath\Profile\functions) {
-	Get-ChildItem $Global:LibPath\Profile\functions -Recurse -Filter "*.ps1" | ForEach-Object {
+	Write-Progress -Id 1 -Activity 'Sourcing Functions...' -PercentComplete 0 -Status 'Starting'
+
+	$counter = 0
+	$functions = Get-ChildItem $Global:LibPath\Profile\functions -Recurse -Filter "*.ps1"
+	$functions | ForEach-Object {
 		if (-not $_.PSIsContainer) {
-			if ($IsDebug) { Write-DebugMessage "Functions: Dot Sourcing $($_.Name)" }
+			$counter ++
+			$SubActivity = "Functions: Dot Sourcing $($_.Name)"
+			if ($IsDebug) { Write-DebugMessage $SubActivity }
+			Write-Progress -Id 1 -Activity 'Sourcing Functions...' -PercentComplete (($Counter / $functions.count) * 100) -Status $SubActivity
 			. $_.FullName
 		}
 	}
+	Write-Progress -Id 1 -Activity 'Sourcing Functions...' -Completed
 }
+
+$Activity = 'Init Scripts...'
+$TotalPercent += 10
+Write-Progress -Id 0 -Activity 'Initializing Profile...' -PercentComplete $TotalPercent -Status $Activity
+
 if (Test-Path $Global:LibPath\Profile\scripts) {
-	Get-ChildItem $Global:LibPath\Profile\scripts -Recurse -Filter "*.ps1" | ForEach-Object {
+	Write-Progress -Id 1 -Activity 'Sourcing Scripts...' -PercentComplete 0 -Status 'Starting'
+
+	$counter = 0
+
+	$functions = Get-ChildItem $Global:LibPath\Profile\scripts -Recurse -Filter "*.ps1"
+	$functions | ForEach-Object {
 		if (-not $_.PSIsContainer) {
-			if ($IsDebug) { Write-DebugMessage "Scripts: Dot Sourcing $($_.Name)" }
+			$counter ++
+			$SubActivity = "Scripts: Dot Sourcing $($_.Name)"
+			if ($IsDebug) { Write-DebugMessage $SubActivity }
+			Write-Progress -Id 1 -Activity 'Sourcing Functions...' -PercentComplete (($Counter / $functions.count) * 100) -Status $SubActivity
 			. $_.FullName
 		}
 	}
+	Write-Progress -Id 1 -Activity 'Sourcing Scripts...' -Completed
 }
+
+$Activity = 'Init PSDefaults...'
+$TotalPercent += 10
+Write-Progress -Id 0 -Activity 'Initializing Profile...' -PercentComplete $TotalPercent -Status $Activity
 
 function AddPSDefault([string]$name, $value) {
 	if ($PSVersionTable.PSVersion -ge '3.0') {
@@ -152,18 +195,36 @@ AddPSDefault "Out-Default:OutVariable" "__"
 #####################  Actual Work  #####################
 
 #Modules
+$Activity = 'Init Modules...'
+$TotalPercent += 10
+Write-Progress -Id 0 -Activity 'Initializing Profile...' -PercentComplete $TotalPercent -Status $Activity
+
 if ($PSVersionTable.PSVersion.Major -gt 2) {
 	if (Test-Path $Global:LibPath\Modules) {
+		Write-Progress -Id 1 -Activity 'Sourcing Scripts...' -PercentComplete 0 -Status 'Starting'
+
+		$counter = 0
+
 		$env:PSModulePath = $env:PSModulePath + ";$LibPath\Modules"
-		Get-ChildItem $Global:LibPath\Modules *.psd1 -Recurse | ForEach-Object {
-			if ($IsDebug) { Write-DebugMessage "Modules: Importing $($_.Name)" }
+		$functions = Get-ChildItem $Global:LibPath\Modules *.psd1 -Recurse
+		$functions | ForEach-Object {
+			$counter ++
+			$SubActivity = "Modules: Importing $($_.Name)"
+			if ($IsDebug) { Write-DebugMessage $SubActivity }
+			Write-Progress -Id 1 -Activity 'Sourcing Functions...' -PercentComplete (($Counter / $functions.count) * 100) -Status $SubActivity
+
 			Import-Module $_.FullName -force -ArgumentList $true
 		}
+		Write-Progress -Id 1 -Activity 'Sourcing Scripts...' -Completed
 	}
 }
 
 #PSDrives
 if (Test-Path $Global:LibPath\Settings\psdrive.csv) {
+	$Activity = 'Init PSDrives...'
+	$TotalPercent += 10
+	Write-Progress -Id 0 -Activity 'Initializing Profile...' -PercentComplete $TotalPercent -Status $Activity
+
 	if ($IsDebug) { Write-DebugMessage "PSDrives: Creating from CSV" }
 	Import-Csv $Global:LibPath\Settings\psdrive.csv | New-ProfilePSDrive
 }
@@ -174,6 +235,10 @@ if (Get-Service VMTools -ea Ignore) {
 }
 
 #Path Adjustments
+$Activity = 'Init Paths...'
+$TotalPercent += 10
+Write-Progress -Id 0 -Activity 'Initializing Profile...' -PercentComplete $TotalPercent -Status $Activity
+
 if ($IsDebug) { Write-DebugMessage "Paths: Adding LibPath and Scripts" }
 add-topath $libpath
 add-topath $libpath\scripts
@@ -196,13 +261,17 @@ if (Test-Path $Global:LibPath\Settings\Remove-FromPath.ini) {
 (Get-SplitEnvPath | Where-Object { -not $_.Exists }).Path | Where-Object { $_ -ne $null } | Remove-FromPath
 
 if ($PSVersionTable.PSVersion.Major -lt 6) {
+	$Activity = 'Init SSL/TLS...'
+	$TotalPercent += 10
+	Write-Progress -Id 0 -Activity 'Initializing Profile...' -PercentComplete $TotalPercent -Status $Activity
+
 	## Allow higher protocols with invoke-webreq and -restmeth
 	if ($IsDebug) { Write-DebugMessage "SSL/TLS: Setting available protocols" }
 	[System.Enum]::GetValues('Net.SecurityProtocolType') |
-	Where-Object { $_ -gt [System.Math]::Max( [Net.ServicePointManager]::SecurityProtocol.value__, [Net.SecurityProtocolType]::Tls.value__ ) } |
-	ForEach-Object {
-		[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor $_
-	}
+		Where-Object { $_ -gt [System.Math]::Max( [Net.ServicePointManager]::SecurityProtocol.value__, [Net.SecurityProtocolType]::Tls.value__ ) } |
+			ForEach-Object {
+				[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor $_
+			}
 } else {
 	#Test PSCore version
 	if (Test-Path "${libpath}\scripts\Get-PSCoreVersion.ps1") {
@@ -233,3 +302,4 @@ if (!($isDotSourced)) {
 	#I hate littering the field with random variables
 	Remove-Item variable:\isDotSourced
 }
+Write-Progress -Id 0 -Activity 'Initializing Profile...' -Completed
