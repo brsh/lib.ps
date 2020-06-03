@@ -49,9 +49,9 @@
 
 [CmdLetBinding(DefaultParameterSetName = 'FileName')]
 param (
-	[Parameter(Mandatory = $true, ParameterSetName = 'FileInfo', ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+	[Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'FileInfo', ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
 	[System.IO.FileInfo[]] $FullName,
-	[Parameter(Mandatory = $true, ParameterSetName = 'FileName', ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+	[Parameter(Position = 0, Mandatory = $true, ParameterSetName = 'FileName', ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
 	[ValidateScript( { test-path $_ })]
 	[string] $FileName,
 	[Parameter(Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
