@@ -201,7 +201,7 @@ Write-Progress -Id 0 -Activity 'Initializing Profile...' -PercentComplete $Total
 
 if ($PSVersionTable.PSVersion.Major -gt 2) {
 	if (Test-Path $Global:LibPath\Modules) {
-		Write-Progress -Id 1 -Activity 'Sourcing Scripts...' -PercentComplete 0 -Status 'Starting'
+		Write-Progress -Id 1 -Activity 'Importing Modules...' -PercentComplete 0 -Status 'Starting'
 
 		$counter = 0
 
@@ -211,11 +211,11 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
 			$counter ++
 			$SubActivity = "Modules: Importing $($_.Name)"
 			if ($IsDebug) { Write-DebugMessage $SubActivity }
-			Write-Progress -Id 1 -Activity 'Sourcing Functions...' -PercentComplete (($Counter / $functions.count) * 100) -Status $SubActivity
+			Write-Progress -Id 1 -Activity 'Importing Modules...' -PercentComplete (($Counter / $functions.count) * 100) -Status $SubActivity
 
 			Import-Module $_.FullName -force -ArgumentList $true
 		}
-		Write-Progress -Id 1 -Activity 'Sourcing Scripts...' -Completed
+		Write-Progress -Id 1 -Activity 'Importing Modules...' -Completed
 	}
 }
 
