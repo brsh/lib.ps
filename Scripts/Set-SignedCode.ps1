@@ -45,6 +45,11 @@
 
 	Signs ALL the ps1 files from here down with the first code signing cert in the store (or prompts for a selection if more than 1)
 
+.EXAMPLE
+	Get-ChildItem -Path . -Include *.ps1, *.psm1, *.psd1, *.ps1xml -Recurse | Set-SignedCode.ps1
+
+	Signs all appropriate module files from here down with the first code signing cert in the store (or prompts for a selection if more than 1)
+
 #>
 
 [CmdLetBinding(DefaultParameterSetName = 'FileName')]
