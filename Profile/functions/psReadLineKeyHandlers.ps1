@@ -36,9 +36,15 @@ function Edit-History {
 	}
 }
 
-if (((Get-Module -Name PSReadline).Version.Major -ge 2) -and ((Get-Module -Name PSReadline).Version.Minor -ge 1)) {
+$RLVersion = (Get-Module -Name PSReadline).Version
+if (($RLVersion.Major -ge 2) -and ((Get-Module -Name PSReadline).Version.Minor -ge 1)) {
 	Set-PSReadLineOption -PredictionSource History
 }
+
+if (($RLVersion.Major -ge 2) -and ((Get-Module -Name PSReadline).Version.Minor -ge 2)) {
+	set-PSReadLineOption -PredictionViewStyle ListView
+}
+
 
 if (get-module -name PSReadline) {
 	#(Attempt to) Keep duplicates out of History

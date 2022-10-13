@@ -1,34 +1,4 @@
-﻿function Test-Port {
-	Param([string]$srv, $port = 80, $timeout = 3000, [switch]$verbose)
-
-	# Does a TCP connection on specified port (80 by default)
-	$ErrorActionPreference = "SilentlyContinue"
-	# Create TCP Client
-	$tcpClient = New-Object system.Net.Sockets.TcpClient
-	# Tell TCP Client to connect to machine on Port
-	$iar = $tcpClient.BeginConnect($srv, $port, $null, $null)
-	# Set the wait time
-	$wait = $iar.AsyncWaitHandle.WaitOne($timeout, $false)
-	# Check to see if the connection is done
-	if (!$wait) {
-		# Close the connection and report timeout
-		$tcpClient.Close()
-		if ($verbose) { Write-Host "Connection Timeout" }
-		Return "Dead"
-	} else {
-		# Close the connection and report the error if there is one
-		$error.Clear()
-		$tcpClient.EndConnect($iar) | Out-Null
-		if (!$?) { if ($verbose) { Write-Host $error[0] }; $failed = $true }
-		$tcpClient.Close()
-	}
-
-	# Return $true if connection Establish else $False
-	if ($failed) { return "Failed" }else { return "Alive" }
-}
-New-Alias -name pp -Value Test-Port -Description "Test a TCP connection on the specified port" -Force
-
-function Test-ValidIPAddress {
+﻿function Test-ValidIPAddress {
 	<#
     .SYNOPSIS
         Tests for valid IP Address
@@ -66,7 +36,7 @@ function Test-ValidIPAddress {
 	}
 }
 
-New-Alias -name isIP -Value Test-ValidIPAddress -Description "Tests for valid IP Address" -force
+New-Alias -Name isIP -Value Test-ValidIPAddress -Description "Tests for valid IP Address" -Force
 
 
 function Test-ValidMACAddress {
@@ -92,7 +62,7 @@ function Test-ValidMACAddress {
 	$Text -match "^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$"
 }
 
-New-Alias -name isMAC -Value Test-ValidMACAddress -Description "Returns true if valid MAC Address" -force
+New-Alias -Name isMAC -Value Test-ValidMACAddress -Description "Returns true if valid MAC Address" -Force
 
 
 function Test-ValidEmail {
@@ -118,4 +88,4 @@ function Test-ValidEmail {
 	$Text -match "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
 }
 
-New-Alias -name isEmail -Value Test-ValidEmail -Description "Returns true if valid email" -force
+New-Alias -Name isEmail -Value Test-ValidEmail -Description "Returns true if valid email" -Force
