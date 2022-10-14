@@ -24,12 +24,12 @@ http://icanhazdadjoke.com
 param (
 	[string] $Search = ''
 )
-$URI = 'icanhazdadjoke.com'
+$URI = 'https://icanhazdadjoke.com'
 
 if ($Search.Trim().Length -gt 0) {
 	[void][System.Reflection.Assembly]::LoadWithPartialName("System.web")
 	$URI = "$URI/search?term=$([System.Web.HttpUtility]::UrlEncode($Search))"
-	write-host $URI
+	Write-Host $URI
 }
 
 $headers = @{
