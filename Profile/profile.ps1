@@ -168,7 +168,7 @@ function AddPSDefault([string]$name, $value) {
 
 function Read-Profiles {
 	#Reload all profiles - helpful when editing/testing profiles
-	Set-Variable -name isDotSourced -value $False -Scope 0
+	Set-Variable -Name isDotSourced -Value $False -Scope 0
 	$isDotSourced = $MyInvocation.InvocationName -eq '.' -or $MyInvocation.Line -eq ''
 	if (!($isDotSourced)) { Write-Host "You must dot source this function" -fore Red; Write-Host "`t. Load-Profiles`n`t. re-Profs" -ForegroundColor "Yellow"; return "" }
 	@(
@@ -184,7 +184,7 @@ function Read-Profiles {
 	}
 }
 
-New-Alias -name re-Profs -value Read-Profiles -Description "Reload profile files (must . source)" -Force
+New-Alias -Name re-Profs -Value Read-Profiles -Description "Reload profile files (must . source)" -Force
 
 #Defaults
 AddPSDefault "Format-Table:AutoSize" { if ($host.Name -eq 'ConsoleHost') { $true } }
@@ -213,7 +213,7 @@ if ($PSVersionTable.PSVersion.Major -gt 2) {
 			if ($IsDebug) { Write-DebugMessage $SubActivity }
 			Write-Progress -Id 1 -Activity 'Importing Modules...' -PercentComplete (($Counter / $functions.count) * 100) -Status $SubActivity
 
-			Import-Module $_.FullName -force -ArgumentList $true
+			Import-Module $_.FullName -Force -ArgumentList $true
 		}
 		Write-Progress -Id 1 -Activity 'Importing Modules...' -Completed
 	}
@@ -281,9 +281,6 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 
 #Only do these next items the first time (initial load)...
 if (!($isDotSourced)) {
-	#Create the "standard" aliases for programs
-	Set-ProgramAliases
-
 	#ShowHeader
 	$Global:SnewToIgnore = "prompt", "PSConsoleHostReadline", "posh-git"
 	#Get-NewCommands
