@@ -2,9 +2,6 @@
 if (($PSVersionTable.PSVersion.Major -ge 7) -and ($PSVersionTable.PSVersion.Minor -ge 2)) {
 	if ($null -ne $PSStyle) {
 		$PSStyle.Progress.UseOSCIndicator = 1
-		if (-not (Get-ExperimentalFeature PSAnsiRenderingFileInfo).Enabled) {
-			$null = Enable-ExperimentalFeature PSAnsiRenderingFileInfo 2>&1
-		}
 		$Previous = $ErrorActionPreference
 		$ErrorActionPreference = 'SilentlyContinue'
 		$PSStyle.FileInfo.Extension.Item('.zip') = $PSStyle.Foreground.Green
