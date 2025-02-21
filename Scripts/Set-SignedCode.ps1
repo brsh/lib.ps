@@ -66,7 +66,7 @@ param (
 	[ValidateScript( {
 			$_ -eq ([uri] $_).AbsoluteURI
 		})]
-	[string] $TimeStampServer = 'http://timestamp.verisign.com/scripts/timstamp.dll'
+	[string] $TimeStampServer = 'http://timestamp.digicert.com/'
 )
 
 BEGIN {
